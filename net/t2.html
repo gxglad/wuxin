@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>N—02 虚拟校园展厅与线上导览 · 数字形象模板库</title>
+<meta name="description" content="计算机网络技术 N—02 模板：虚拟校园展厅与线上导览，含场景切换、热点交互、路线导览与移动端适配。">
+<meta name="theme-color" content="#F5F2EB">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/template.css">
+<style>
+/* ===== N—02 专属：虚拟展厅 ===== */
+.d-tour{
+  background:#0F161A;border:1px solid rgba(255,255,255,.08);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow);color:#E8E2D5;
+}
+.t-stage{position:relative;height:clamp(320px,46vw,600px);overflow:hidden;cursor:grab}
+.t-stage.is-drag{cursor:grabbing}
+.t-world{
+  position:absolute;inset:0;display:flex;width:200%;will-change:transform;
+  transition:transform .9s cubic-bezier(.22,1,.36,1);
+}
+.t-scene{position:relative;flex:0 0 50%;width:50%;height:100%;overflow:hidden}
+.t-scene svg{display:block;width:100%;height:100%}
+
+/* 场景上的热点 */
+.t-hot{
+  position:absolute;transform:translate(-50%,-50%);z-index:4;
+  width:26px;height:26px;border-radius:50%;border:1px solid rgba(232,226,213,.75);
+  background:rgba(15,22,26,.45);backdrop-filter:blur(4px);display:grid;place-items:center;
+  transition:transform .3s,background .3s,border-color .3s;
+}
+.t-hot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:#E8E2D5;transition:.3s;
+}
+.t-hot:hover,.t-hot.is-on{background:#C64B39;border-color:#C64B39;transform:translate(-50%,-50%) scale(1.18)}
+.t-hot:hover::after,.t-hot.is-on::after{background:#fff}
+.t-hot::before{
+  content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(232,226,213,.35);
+  animation:pulse 2.6s ease-out infinite;
+}
+@keyframes pulse{0%{transform:scale(.85);opacity:.9}70%{transform:scale(1.35);opacity:0}100%{opacity:0}}
+
+/* 场景内的浮层文字 */
+.t-hud{position:absolute;left:0;right:0;top:0;padding:clamp(.9rem,2.4vw,1.6rem);display:flex;justify-content:space-between;gap:1rem;z-index:3;pointer-events:none}
+.t-hud__l b{display:block;font-family:var(--serif);font-size:clamp(1rem,2.2vw,1.35rem);letter-spacing:.06em;font-weight:600}
+.t-hud__l span{font-family:var(--mono);font-size:.56rem;letter-spacing:.24em;color:rgba(232,226,213,.55)}
+.t-hud__r{text-align:right;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;color:rgba(232,226,213,.5);line-height:1.9}
+
+/* 底部控制条 */
+.t-ctrl{
+  display:flex;align-items:center;gap:.8rem;padding:.75rem clamp(.8rem,2vw,1.2rem);
+  background:#0B1114;border-top:1px solid rgba(255,255,255,.07);flex-wrap:wrap;
+}
+.t-ctrl__dots{display:flex;gap:.4rem;align-items:center}
+.t-ctrl__dots button{
+  width:22px;height:3px;border-radius:2px;background:rgba(232,226,213,.22);transition:.35s;
+}
+.t-ctrl__dots button.is-on{background:#C64B39;width:34px}
+.t-ctrl__name{font-size:.72rem;color:rgba(232,226,213,.7);margin-left:.4rem}
+.t-ctrl__name b{color:#E8E2D5;font-weight:600;margin-right:.4rem}
+.t-ctrl__btns{margin-left:auto;display:flex;gap:.4rem}
+.t-btn{
+  font:inherit;font-size:.66rem;padding:.32rem .7rem;border-radius:999px;color:rgba(232,226,213,.8);
+  border:1px solid rgba(232,226,213,.22);transition:.28s;
+}
+.t-btn:hover{background:rgba(232,226,213,.1);color:#fff}
+.t-btn--on{background:#C64B39;border-color:#C64B39;color:#fff}
+.t-hint{font-size:.58rem;color:rgba(232,226,213,.35);font-family:var(--mono);letter-spacing:.1em}
+
+/* 地图 + 介绍 */
+.t-below{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.07)}
+.t-panel{background:#101A1F;padding:clamp(1.1rem,2.6vw,1.6rem)}
+.t-panel h3{font-family:var(--serif);font-size:.95rem;margin-bottom:.3rem}
+.t-panel>p{font-size:.66rem;color:rgba(232,226,213,.45);margin-bottom:1.1rem}
+
+.t-map{position:relative;aspect-ratio:16/10;border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;background:
+  radial-gradient(ellipse at 70% 30%,rgba(198,75,57,.14),transparent 60%),
+  repeating-linear-gradient(0deg,transparent 0 19px,rgba(232,226,213,.05) 19px 20px),
+  repeating-linear-gradient(90deg,transparent 0 19px,rgba(232,226,213,.05) 19px 20px)}
+.t-map__path{position:absolute;inset:0}
+.t-map__dot{
+  position:absolute;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;
+  background:rgba(232,226,213,.35);border:1px solid rgba(232,226,213,.5);transition:.3s;cursor:pointer;
+}
+.t-map__dot:hover{background:#E8E2D5}
+.t-map__dot.is-on{background:#C64B39;border-color:#C64B39;box-shadow:0 0 0 4px rgba(198,75,57,.22)}
+.t-map__dot span{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);white-space:nowrap;
+  font-size:.6rem;color:rgba(232,226,213,.6);pointer-events:none;
+}
+.t-map__dot.is-on span{color:#E8E2D5}
+
+.t-info h4{font-family:var(--serif);font-size:1.1rem;margin-bottom:.5rem}
+.t-info p{font-size:.76rem;line-height:1.95;color:rgba(232,226,213,.6)}
+.t-info__kv{display:flex;gap:1.4rem;margin-top:1rem;flex-wrap:wrap}
+.t-info__kv div{font-size:.62rem;color:rgba(232,226,213,.4)}
+.t-info__kv b{display:block;font-family:var(--mono);font-size:.82rem;color:#E8E2D5;margin-top:.2rem;font-weight:500}
+.t-info__tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:1rem}
+.t-info__tags span{font-size:.6rem;padding:.14rem .45rem;border-radius:3px;background:rgba(232,226,213,.1);color:rgba(232,226,213,.7)}
+
+@media (max-width:820px){
+  .t-below{grid-template-columns:1fr}
+  .t-stage{height:clamp(260px,64vw,360px)}
+  .t-hud__r{display:none}
+}
+</style>
+</head>
+<body class="major-net">
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="../index.html">
+      <span class="seal">匠</span>
+      <span class="brand__txt"><b>数字形象模板库</b><span>SUZHOU CRAFTSMANSHIP</span></span>
+    </a>
+    <nav class="nav__links" aria-label="主导航">
+      <a href="../index.html#major-app">计算机应用</a>
+      <a href="../index.html#major-net">计算机网络</a>
+      <a href="../index.html#major-cloud">云计算</a>
+      <a href="../index.html#topics">选题清单</a>
+    </nav>
+    <div class="nav__tools">
+      <button class="icon-btn theme-btn" aria-label="切换深浅色">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+      <button class="icon-btn burger" aria-label="菜单" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../index.html">返回首页 <span>HOME</span></a>
+  <a href="../index.html#major-app">计算机应用技术 <span>APP</span></a>
+  <a href="../index.html#major-net">计算机网络技术 <span>NET</span></a>
+  <a href="../index.html#major-cloud">云计算技术应用 <span>CLOUD</span></a>
+  <a href="../index.html#topics">选题清单 <span>TOPIC</span></a>
+  <div class="drawer__foot">N—02 · 虚拟展厅导览</div>
+</div>
+
+<main>
+<section class="thead">
+  <div class="wrap">
+    <nav class="crumb"><a href="../index.html">首页</a><i>/</i><a href="../index.html#major-net">计算机网络技术</a><i>/</i><span>N—02</span></nav>
+    <div class="thead__row">
+      <div>
+        <p class="thead__no"><i></i>N—02 · 导览</p>
+        <h1 class="h1">虚拟校园展厅<br>与线上导览</h1>
+        <p class="lede thead__sub">让没来过学校的人，在浏览器里走完一圈。展厅不是航拍视频，是一套可以点、可以停、可以回头看的信息结构。</p>
+        <div class="thead__tags">
+          <span class="tag tag--accent">场景导览</span>
+          <span class="tag">热点交互</span>
+          <span class="tag">移动端手势</span>
+          <span class="tag">信息分层</span>
+        </div>
+      </div>
+      <div class="thead__side">
+        <span class="k">成果形式</span>
+        <span class="v">网站 / 互动导览</span>
+        <span class="k">建议工作量</span>
+        <span class="v">7—9 周</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<article class="demo">
+  <div class="wrap">
+    <div class="demo__bar">
+      <span class="lbl">DEMO · 作品主体</span>
+      <span class="hint">底部可切换六个场景，点击场景里的圆点查看热点说明</span>
+    </div>
+
+    <div class="d-tour">
+      <div class="t-stage" id="stage">
+        <div class="t-world" id="world">
+
+          <!-- 场景 1 校门 -->
+          <div class="t-scene" data-name="南校门" data-en="SOUTH GATE">
+            <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#233840"/><stop offset=".55" stop-color="#16252C"/><stop offset="1" stop-color="#0E1A1F"/>
+                </linearGradient>
+                <linearGradient id="grd1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#1B2A30"/><stop offset="1" stop-color="#0A1114"/>
+                </linearGradient>
+              </defs>
+              <rect width="800" height="520" fill="url(#sky1)"/>
+              <!-- 月亮 -->
+              <circle cx="656" cy="98" r="30" fill="#E8D9B0" opacity=".07"/>
+              <circle cx="656" cy="98" r="13" fill="#E8D9B0" opacity=".38"/>
+              <!-- 远山 -->
+              <path d="M0 302 L120 262 L232 298 L344 252 L470 300 L600 264 L720 298 L800 278 L800 520 L0 520Z" fill="#122027"/>
+              <!-- 楼群剪影 -->
+              <g fill="#16262D">
+                <rect x="262" y="332" width="46" height="140"/>
+                <rect x="316" y="316" width="96" height="156"/>
+                <rect x="420" y="336" width="66" height="136"/>
+              </g>
+              <!-- 两侧树 -->
+              <g fill="#12211D">
+                <circle cx="58" cy="306" r="64"/><circle cx="120" cy="336" r="44"/><circle cx="10" cy="344" r="46"/>
+                <circle cx="744" cy="302" r="62"/><circle cx="686" cy="338" r="42"/><circle cx="792" cy="346" r="44"/>
+              </g>
+              <g fill="#1B2A26">
+                <rect x="52" y="360" width="11" height="76"/><rect x="738" y="358" width="11" height="78"/>
+              </g>
+              <!-- 门体 -->
+              <rect x="190" y="244" width="420" height="182" fill="#0D191E"/>
+              <rect x="190" y="244" width="420" height="182" fill="url(#grd1)" opacity=".55"/>
+              <!-- 门内远景 -->
+              <g>
+                <rect x="190" y="244" width="420" height="182" fill="#132229"/>
+                <path d="M190 244 h420 v182 h-420Z" fill="#0C171C" opacity=".55"/>
+                <!-- 远处楼群与树线 -->
+                <g fill="#16262D">
+                  <rect x="214" y="330" width="60" height="96"/><rect x="286" y="344" width="44" height="82"/>
+                  <rect x="470" y="336" width="56" height="90"/><rect x="536" y="348" width="42" height="78"/>
+                </g>
+                <g fill="#0E1E1A">
+                  <circle cx="222" cy="360" r="26"/><circle cx="546" cy="366" r="24"/>
+                </g>
+                <g fill="#E8B169" opacity=".3">
+                  <rect x="226" y="348" width="9" height="7"/><rect x="244" y="348" width="9" height="7"/>
+                  <rect x="478" y="352" width="9" height="7"/><rect x="496" y="352" width="9" height="7"/>
+                </g>
+                <!-- 通道与路灯 -->
+                <path d="M400 426 L252 426 L326 330 L474 330 L548 426Z" fill="#1A2B33" opacity=".55"/>
+                <path d="M400 426 L330 426 L368 340 L432 340 L470 426Z" fill="#22353D" opacity=".35"/>
+                <g fill="#E8B169" opacity=".4">
+                  <circle cx="318" cy="386" r="2.4"/><circle cx="482" cy="386" r="2.4"/>
+                </g>
+              </g>
+              <rect x="150" y="196" width="40" height="228" fill="#1D2E35"/>
+              <rect x="610" y="196" width="40" height="228" fill="#1D2E35"/>
+              <rect x="150" y="178" width="500" height="20" fill="#243B44"/>
+              <rect x="150" y="196" width="500" height="3" fill="#C64B39" opacity=".5"/>
+              <!-- 门内灯火 -->
+              <rect x="190" y="380" width="420" height="46" fill="#E8B169" opacity=".05"/>
+              <!-- 地面 -->
+              <rect y="424" width="800" height="96" fill="#0A1114"/>
+              <path d="M296 520 L400 424 L504 520Z" fill="#141F25"/>
+              <path d="M310 520 L400 432 L490 520" fill="none" stroke="#C64B39" stroke-width="1.2" opacity=".3"/>
+              <path d="M0 424 L800 424" stroke="#243B44" stroke-width="1" opacity=".8"/>
+              <!-- 灯 -->
+              <circle cx="206" cy="212" r="9" fill="#E8B169" opacity=".1"/>
+              <circle cx="206" cy="212" r="4" fill="#E8B169" opacity=".6"/>
+              <circle cx="594" cy="212" r="9" fill="#E8B169" opacity=".1"/>
+              <circle cx="594" cy="212" r="4" fill="#E8B169" opacity=".6"/>
+              <text x="400" y="148" text-anchor="middle" font-family="serif" font-size="30" fill="#E8E2D5" opacity=".88" letter-spacing="8">江苏联合职业技术学院</text>
+              <text x="400" y="168" text-anchor="middle" font-family="monospace" font-size="8" fill="#E8E2D5" opacity=".32" letter-spacing="5">ZHANGJIAGANG BRANCH</text>
+            </svg>
+            <div class="t-hud">
+              <div class="t-hud__l"><b>南校门</b><span>01 / SOUTH GATE</span></div>
+              <div class="t-hud__r">阴 18℃<br>校门至实训楼 320 步</div>
+            </div>
+            <button class="t-hot" style="left:50%;top:60%" data-i="0" aria-label="校门热点"></button>
+          </div>
+
+          <!-- 场景 2 实训楼 -->
+          <div class="t-scene" data-name="实训楼" data-en="TRAINING CENTER">
+            <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#1B3038"/><stop offset="1" stop-color="#0F1B21"/>
+                </linearGradient>
+                <linearGradient id="wall2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#1E3138"/><stop offset="1" stop-color="#152329"/>
+                </linearGradient>
+              </defs>
+              <rect width="800" height="520" fill="url(#sky2)"/>
+              <!-- 主楼体 -->
+              <rect x="70" y="86" width="660" height="346" fill="url(#wall2)"/>
+              <rect x="70" y="86" width="660" height="8" fill="#2A424C"/>
+              <!-- 竖向分隔 -->
+              <g fill="#122027">
+                <rect x="222" y="86" width="6" height="346"/>
+                <rect x="402" y="86" width="6" height="346"/>
+                <rect x="582" y="86" width="6" height="346"/>
+              </g>
+              <!-- 窗（3 段 × 4 层） -->
+              <g fill="#0A1418">
+                <rect x="92" y="118" width="48" height="34"/><rect x="150" y="118" width="48" height="34"/>
+                <rect x="242" y="118" width="48" height="34"/><rect x="300" y="118" width="48" height="34"/><rect x="356" y="118" width="48" height="34"/>
+                <rect x="422" y="118" width="48" height="34"/><rect x="480" y="118" width="48" height="34"/><rect x="536" y="118" width="48" height="34"/>
+                <rect x="602" y="118" width="48" height="34"/><rect x="660" y="118" width="48" height="34"/>
+
+                <rect x="92" y="182" width="48" height="34"/><rect x="150" y="182" width="48" height="34"/>
+                <rect x="242" y="182" width="48" height="34"/><rect x="300" y="182" width="48" height="34"/><rect x="356" y="182" width="48" height="34"/>
+                <rect x="422" y="182" width="48" height="34"/><rect x="480" y="182" width="48" height="34"/><rect x="536" y="182" width="48" height="34"/>
+                <rect x="602" y="182" width="48" height="34"/><rect x="660" y="182" width="48" height="34"/>
+
+                <rect x="92" y="246" width="48" height="34"/><rect x="150" y="246" width="48" height="34"/>
+                <rect x="242" y="246" width="48" height="34"/><rect x="300" y="246" width="48" height="34"/><rect x="356" y="246" width="48" height="34"/>
+                <rect x="422" y="246" width="48" height="34"/><rect x="480" y="246" width="48" height="34"/><rect x="536" y="246" width="48" height="34"/>
+                <rect x="602" y="246" width="48" height="34"/><rect x="660" y="246" width="48" height="34"/>
+
+                <rect x="92" y="310" width="48" height="34"/><rect x="150" y="310" width="48" height="34"/>
+                <rect x="242" y="310" width="48" height="34"/><rect x="300" y="310" width="48" height="34"/><rect x="356" y="310" width="48" height="34"/>
+                <rect x="422" y="310" width="48" height="34"/><rect x="480" y="310" width="48" height="34"/><rect x="536" y="310" width="48" height="34"/>
+                <rect x="602" y="310" width="48" height="34"/><rect x="660" y="310" width="48" height="34"/>
+              </g>
+              <!-- 亮着的窗 -->
+              <g fill="#E8B169">
+                <rect x="300" y="182" width="48" height="34" opacity=".28"/>
+                <rect x="480" y="246" width="48" height="34" opacity=".2"/>
+                <rect x="660" y="118" width="48" height="34" opacity=".16"/>
+                <rect x="92" y="310" width="48" height="34" opacity=".14"/>
+                <rect x="356" y="310" width="48" height="34" opacity=".22"/>
+              </g>
+              <rect x="422" y="246" width="48" height="34" fill="#C64B39" opacity=".14"/>
+              <!-- 底层与入口 -->
+              <rect x="70" y="368" width="660" height="64" fill="#0E1A1F"/>
+              <rect x="352" y="372" width="96" height="60" fill="#0A1418"/>
+              <rect x="352" y="372" width="96" height="60" fill="#E8B169" opacity=".1"/>
+              <rect x="352" y="372" width="96" height="4" fill="#E8B169" opacity=".35"/>
+              <!-- 台阶 -->
+              <rect x="330" y="432" width="140" height="6" fill="#1B2C33"/>
+              <rect x="320" y="438" width="160" height="6" fill="#16262D"/>
+              <!-- 地面 -->
+              <rect y="444" width="800" height="76" fill="#080E11"/>
+              <rect x="352" y="444" width="96" height="30" fill="#E8B169" opacity=".05"/>
+              <path d="M0 444 L800 444" stroke="#243B44" stroke-width="1" opacity=".6"/>
+            </svg>
+            <div class="t-hud">
+              <div class="t-hud__l"><b>实训楼</b><span>02 / TRAINING CENTER</span></div>
+              <div class="t-hud__r">6 层 · 18 间机房<br>开放 8:00—21:00</div>
+            </div>
+            <button class="t-hot" style="left:38%;top:42%" data-i="1" aria-label="实训楼热点"></button>
+            <button class="t-hot" style="left:66%;top:72%" data-i="5" aria-label="机房热点"></button>
+          </div>
+
+          <!-- 场景 3 图书馆 -->
+          <div class="t-scene" data-name="图书馆" data-en="LIBRARY">
+            <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
+              <rect width="800" height="520" fill="#121C22"/>
+              <rect x="90" y="150" width="620" height="250" fill="#1A2A31"/>
+              <rect x="90" y="150" width="620" height="14" fill="#243B44"/>
+              <!-- 书架剪影 -->
+              <g fill="#0D171C">
+                <rect x="120" y="190" width="120" height="180"/>
+                <rect x="260" y="190" width="120" height="180"/>
+                <rect x="400" y="190" width="120" height="180"/>
+                <rect x="540" y="190" width="140" height="180"/>
+              </g>
+              <g stroke="#2C4650" stroke-width="1">
+                <path d="M120 235h120M120 280h120M120 325h120"/>
+                <path d="M260 235h120M260 280h120M260 325h120"/>
+                <path d="M400 235h120M400 280h120M400 325h120"/>
+                <path d="M540 235h140M540 280h140M540 325h140"/>
+              </g>
+              <g fill="#C64B39" opacity=".55">
+                <rect x="130" y="215" width="6" height="18"/><rect x="146" y="212" width="5" height="21"/>
+                <rect x="272" y="258" width="5" height="20"/><rect x="290" y="255" width="6" height="23"/>
+                <rect x="612" y="303" width="6" height="20"/><rect x="630" y="300" width="5" height="23"/>
+              </g>
+              <!-- 阅读桌 -->
+              <rect x="200" y="400" width="400" height="12" fill="#243B44"/>
+              <rect x="216" y="412" width="8" height="60" fill="#1A2A31"/>
+              <rect x="576" y="412" width="8" height="60" fill="#1A2A31"/>
+              <circle cx="330" cy="392" r="10" fill="#E8B169" opacity=".5"/>
+              <circle cx="330" cy="380" r="16" fill="#E8B169" opacity=".12"/>
+              <text x="400" y="120" text-anchor="middle" font-family="serif" font-size="20" fill="#E8E2D5" opacity=".5" letter-spacing="8">静 阅 三 层</text>
+              <rect y="472" width="800" height="48" fill="#0A1114"/>
+            </svg>
+            <div class="t-hud">
+              <div class="t-hud__l"><b>图书馆</b><span>03 / LIBRARY</span></div>
+              <div class="t-hud__r">藏书 12 万册<br>自习座位 480 个</div>
+            </div>
+            <button class="t-hot" style="left:44%;top:66%" data-i="2" aria-label="图书馆热点"></button>
+          </div>
+
+          <!-- 场景 4 展厅 -->
+          <div class="t-scene" data-name="展厅" data-en="EXHIBITION HALL">
+            <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
+              <rect width="800" height="520" fill="#0E171C"/>
+              <rect x="60" y="90" width="680" height="340" fill="#131F25"/>
+              <!-- 展板 -->
+              <g>
+                <rect x="110" y="140" width="180" height="120" fill="#1B2C33"/>
+                <rect x="110" y="140" width="180" height="120" fill="none" stroke="#C64B39" stroke-width="1.5" opacity=".6"/>
+                <circle cx="150" cy="180" r="14" fill="#C64B39" opacity=".5"/>
+                <rect x="128" y="205" width="90" height="5" fill="#E8E2D5" opacity=".22"/>
+                <rect x="128" y="218" width="60" height="4" fill="#E8E2D5" opacity=".14"/>
+
+                <rect x="320" y="140" width="180" height="120" fill="#1B2C33"/>
+                <rect x="320" y="140" width="180" height="120" fill="none" stroke="#5E8B78" stroke-width="1.5" opacity=".5"/>
+                <g fill="#5E8B78" opacity=".5">
+                  <rect x="344" y="196" width="10" height="38"/><rect x="362" y="182" width="10" height="52"/>
+                  <rect x="380" y="170" width="10" height="64"/><rect x="398" y="190" width="10" height="44"/>
+                </g>
+                <rect x="338" y="238" width="90" height="4" fill="#E8E2D5" opacity=".14"/>
+
+                <rect x="530" y="140" width="180" height="120" fill="#1B2C33"/>
+                <rect x="530" y="140" width="180" height="120" fill="none" stroke="#A8874F" stroke-width="1.5" opacity=".5"/>
+                <path d="M560 230 L600 180 L630 212 L664 168 L690 230" fill="none" stroke="#A8874F" stroke-width="1.6" opacity=".6"/>
+              </g>
+              <!-- 展台 -->
+              <rect x="150" y="330" width="120" height="60" fill="#182930"/>
+              <rect x="340" y="330" width="120" height="60" fill="#182930"/>
+              <rect x="530" y="330" width="120" height="60" fill="#182930"/>
+              <rect y="440" width="800" height="80" fill="#0A1114"/>
+              <path d="M0 440 L800 440" stroke="#243B44" stroke-width="1"/>
+              <text x="400" y="115" text-anchor="middle" font-family="serif" font-size="17" fill="#E8E2D5" opacity=".45" letter-spacing="10">毕 业 设 计 展</text>
+            </svg>
+            <div class="t-hud">
+              <div class="t-hud__l"><b>展厅</b><span>04 / EXHIBITION</span></div>
+              <div class="t-hud__r">2022 级作品 47 件<br>展期 11.12—11.26</div>
+            </div>
+            <button class="t-hot" style="left:25%;top:38%" data-i="3" aria-label="展板热点"></button>
+            <button class="t-hot" style="left:62%;top:70%" data-i="3" aria-label="展台热点"></button>
+          </div>
+
+          <!-- 场景 5 操场 -->
+          <div class="t-scene" data-name="操场" data-en="SPORTS FIELD">
+            <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
+              <rect width="800" height="520" fill="#0F1A1F"/>
+              <rect y="200" width="800" height="320" fill="#12241F"/>
+              <ellipse cx="400" cy="360" rx="330" ry="120" fill="#173029" opacity=".9"/>
+              <ellipse cx="400" cy="360" rx="330" ry="120" fill="none" stroke="#E8E2D5" stroke-width="1.4" opacity=".18"/>
+              <ellipse cx="400" cy="360" rx="250" ry="80" fill="none" stroke="#E8E2D5" stroke-width="1.2" opacity=".14"/>
+              <path d="M400 240 L400 480" stroke="#E8E2D5" stroke-width="1.2" opacity=".14"/>
+              <rect x="330" y="330" width="140" height="60" fill="none" stroke="#E8E2D5" stroke-width="1.2" opacity=".14"/>
+              <g opacity=".5">
+                <rect x="80" y="150" width="8" height="70" fill="#243B44"/><rect x="712" y="150" width="8" height="70" fill="#243B44"/>
+                <circle cx="84" cy="150" r="4" fill="#C64B39"/><circle cx="716" cy="150" r="4" fill="#C64B39"/>
+              </g>
+              <g fill="#1D2E35" opacity=".9">
+                <rect x="0" y="60" width="120" height="160"/><rect x="680" y="40" width="120" height="180"/>
+              </g>
+              <text x="400" y="120" text-anchor="middle" font-family="serif" font-size="16" fill="#E8E2D5" opacity=".45" letter-spacing="8">四 百 米 · 标 准 塑 胶</text>
+            </svg>
+            <div class="t-hud">
+              <div class="t-hud__l"><b>操场</b><span>05 / SPORTS FIELD</span></div>
+              <div class="t-hud__r">400 米塑胶跑道<br>夜跑 18:00—21:00</div>
+            </div>
+            <button class="t-hot" style="left:50%;top:68%" data-i="4" aria-label="操场热点"></button>
+          </div>
+
+          <!-- 场景 6 机房 -->
+          <div class="t-scene" data-name="云机房" data-en="CLOUD LAB">
+            <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
+              <rect width="800" height="520" fill="#0D1519"/>
+              <rect x="60" y="80" width="680" height="360" fill="#101E24"/>
+              <!-- 机柜 -->
+              <g>
+                <rect x="120" y="130" width="90" height="260" fill="#16262D"/>
+                <rect x="230" y="130" width="90" height="260" fill="#16262D"/>
+                <rect x="340" y="130" width="90" height="260" fill="#16262D"/>
+                <rect x="450" y="130" width="90" height="260" fill="#16262D"/>
+                <rect x="560" y="130" width="90" height="260" fill="#16262D"/>
+              </g>
+              <g fill="#5E8B78" opacity=".55">
+                <rect x="132" y="150" width="66" height="6"/><rect x="132" y="168" width="66" height="6"/>
+                <rect x="242" y="150" width="66" height="6"/><rect x="242" y="186" width="66" height="6"/>
+                <rect x="352" y="156" width="66" height="6"/><rect x="352" y="174" width="66" height="6"/>
+                <rect x="462" y="150" width="66" height="6"/><rect x="462" y="168" width="66" height="6"/>
+                <rect x="572" y="180" width="66" height="6"/><rect x="572" y="198" width="66" height="6"/>
+              </g>
+              <g fill="#C64B39" opacity=".8">
+                <circle cx="188" cy="156" r="2"/><circle cx="298" cy="192" r="2"/><circle cx="408" cy="162" r="2"/>
+                <circle cx="518" cy="174" r="2"/><circle cx="628" cy="204" r="2"/>
+              </g>
+              <!-- 地面 -->
+              <rect y="390" width="800" height="130" fill="#0A1114"/>
+              <path d="M0 390 L800 390" stroke="#1B2C33" stroke-width="1"/>
+              <text x="400" y="450" text-anchor="middle" font-family="monospace" font-size="9" fill="#5E8B78" opacity=".55" letter-spacing="4">VIRTUALIZATION · CONTAINER · STORAGE</text>
+              <text x="400" y="112" text-anchor="middle" font-family="serif" font-size="15" fill="#E8E2D5" opacity=".4" letter-spacing="8">云 计 算 实 训 室</text>
+            </svg>
+            <div class="t-hud">
+              <div class="t-hud__l"><b>云机房</b><span>06 / CLOUD LAB</span></div>
+              <div class="t-hud__r">48 节点 · 2 台存储<br>支撑三专业实训</div>
+            </div>
+            <button class="t-hot" style="left:36%;top:44%" data-i="5" aria-label="机柜热点"></button>
+          </div>
+
+          </div>
+      </div>
+
+      <div class="t-ctrl">
+          <div class="t-ctrl__dots" id="dots"></div>
+          <div class="t-ctrl__name"><b id="cName">南校门</b><span id="cEn">SOUTH GATE</span></div>
+          <div class="t-ctrl__btns">
+            <button class="t-btn" id="prev" aria-label="上一个场景">←</button>
+            <button class="t-btn" id="next" aria-label="下一个场景">→</button>
+            <button class="t-btn t-btn--on" id="play">自动巡游</button>
+          </div>
+          <span class="t-hint">拖动画面可左右查看</span>
+        </div>
+
+      <div class="t-below">
+        <div class="t-panel">
+          <h3>导览地图</h3>
+          <p>点击地图上的点，可以直接跳到对应场景</p>
+          <div class="t-map" id="map">
+            <svg class="t-map__path" viewBox="0 0 320 200" fill="none">
+              <path d="M46 150 L110 118 L166 132 L214 92 L262 62" stroke="#C64B39" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="t-panel t-info">
+          <h3>当前点位</h3>
+          <p>点击"下一站"或场景中的热点继续参观</p>
+          <h4 id="iName">南校门</h4>
+          <p id="iDesc">学校的正门。门内是一条 320 步的梧桐道，直通实训楼；每天 7:40 前后，这里会有一阵短暂的自行车铃。</p>
+          <div class="t-info__kv">
+            <div>步行至下一站<b id="iWalk">2 分钟</b></div>
+            <div>开放时间<b id="iOpen">全天</b></div>
+            <div>当前展项<b id="iNo">01 / 06</b></div>
+          </div>
+          <div class="t-info__tags" id="iTags"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<section class="spec">
+  <div class="wrap spec__grid">
+    <aside class="spec__aside">
+      <p class="eyebrow">设计说明</p>
+      <h2 class="h2" style="margin-top:.9rem">用脚步丈量<br>一所学校</h2>
+      <ul class="spec__facts">
+        <li><span>对应选题</span><b>虚拟校园展厅与线上导览</b></li>
+        <li><span>成果形式</span><b>网站 / 互动导览</b></li>
+        <li><span>核心技术</span><b>HTML · CSS · 原生 JS · SVG</b></li>
+        <li><span>场景数量</span><b>6 个点位 / 可扩展</b></li>
+        <li><span>适配</span><b>手机触屏 / 电脑拖拽</b></li>
+        <li><span>发布方式</span><b>GitHub Pages</b></li>
+      </ul>
+    </aside>
+    <div class="spec__body">
+      <div class="spec__item reveal">
+        <h3><em>01</em>选题背景</h3>
+        <p>招生季最常见的场景是：家长在手机上搜学校，看到的要么是几张全景照片，要么是一段两分钟的航拍视频。前者看不出空间关系，后者只能被动观看。本选题把校园拆成六个可停留的点位，用"场景 + 热点 + 说明"的方式让人自己决定看哪里、看多久。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>02</em>设计思路</h3>
+        <p>不追求 3D 还原，而是做"氛围级"的矢量场景：用色块、剪影和光点表达空间，重点放在信息层——每个点位都有名称、开放时间、步行距离与一句具体 description。</p>
+        <ul>
+          <li>场景切换用横向位移，保持"走在路上"的空间连续感。</li>
+          <li>热点只放三个以内的关键信息，不做百科全书。</li>
+          <li>右侧信息面板随场景更新，文字比图片承担更多解释。</li>
+          <li>地图与场景双向联动，点击任一处都能跳转。</li>
+        </ul>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>03</em>「五心」主题体现</h3>
+        <p><b>红心</b>：南校门与展厅两个点位承担对外表达，把学校的历史与成果放在参观动线的首尾。<b>仁心</b>：每个点位都写了"人"的细节——自行车铃、食堂蒸汽、夜跑的灯，而不是坪数与面积。<b>恒心</b>：六个场景的透视消失点统一在同一条水平线上，改到第四版才对齐。<b>匠心</b>：热点呼吸动画统一 2.6 秒周期，与场景切换时长形成节奏差。<b>创心</b>：全部场景用 SVG 手绘，单文件即可运行，不依赖任何 3D 引擎。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>04</em>技术实现</h3>
+        <p>场景容器宽度 200%，通过 translateX 位移切换；指针事件计算位移量，超过阈值即翻页；自动巡游用 setInterval 驱动，交互后自动暂停。</p>
+        <div class="chips">
+          <span>translateX 场景位移</span>
+          <span>Pointer Events 拖拽</span>
+          <span>SVG 矢量场景</span>
+          <span>requestAnimation 节流</span>
+          <span>数据驱动信息面板</span>
+          <span>移动端手势适配</span>
+        </div>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>05</em>可拓展方向</h3>
+        <ul>
+          <li>替换为真实全景照片，用 CSS 3D 或 WebGL 做球面投影。</li>
+          <li>增加语音讲解与字幕，服务不便阅读的访客。</li>
+          <li>接入二维码，扫码即可从校园实地的展牌进入对应点位。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pager">
+  <div class="wrap pager__in">
+    <a href="t1.html" class="prev">
+      <span class="k">← 上一个模板</span>
+      <span class="t">N—01 学校门户网站设计与实现（含后台管理）</span>
+    </a>
+    <a href="../cloud/t1.html" class="next">
+      <span class="k">下一个模板 →</span>
+      <span class="t">C—01 校园数字形象云平台与作品展示站</span>
+    </a>
+  </div>
+</nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__bar">
+      <span>© <span data-year>2026</span> 信息工程系 · 毕业设计教学参考</span>
+      <span class="mono">N—02 · CAMPUS TOUR</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/base.js"></script>
+<script>
+(function(){
+  var scenes = [].slice.call(document.querySelectorAll('.t-scene'));
+  var world = document.getElementById('world');
+  var stage = document.getElementById('stage');
+  var dots = document.getElementById('dots');
+  var total = scenes.length, idx = 0, timer = null, playing = false;
+
+  var data = [
+    { name:'南校门', en:'SOUTH GATE', desc:'学校的正门。门内是一条 320 步的梧桐道，直通实训楼；每天 7:40 前后，这里会有一阵短暂的自行车铃。', walk:'2 分钟', open:'全天', tags:['地标','招生第一站','合影点'] },
+    { name:'实训楼', en:'TRAINING CENTER', desc:'六层，十八间机房。三层以上按专业分层，晚上九点前都亮着灯——毕业设计冲刺的那几周，走廊里全是键盘声。', walk:'3 分钟', open:'8:00—21:00', tags:['实训','机房','作品产出'] },
+    { name:'图书馆', en:'LIBRARY', desc:'藏书十二万册，三层是自习区，四百八十个座位。靠窗那一排要提前占，下午的光会从书架缝里漏下来。', walk:'5 分钟', open:'8:30—21:30', tags:['自习','借阅','安静区'] },
+    { name:'展厅', en:'EXHIBITION', desc:'毕业设计的固定展场。今年的四十七件作品在这里排开，从校园导览大屏到一台会说话的旧收音机。', walk:'1 分钟', open:'展期 11.12—11.26', tags:['毕业设计','展览','答辩'] },
+    { name:'操场', en:'SPORTS FIELD', desc:'四百米标准塑胶跑道。夜跑从六点开始，跑道上的人影被灯拉得很长，操场边永远有人在等外卖。', walk:'6 分钟', open:'6:00—22:00', tags:['运动','夜跑','集会'] },
+    { name:'云机房', en:'CLOUD LAB', desc:'四十八个节点、两台存储，支撑三个专业的虚拟化与容器实训。安静，但指示灯一直在闪。', walk:'4 分钟', open:'8:00—21:00', tags:['云计算','虚拟化','实训'] }
+  ];
+
+  /* 地图点位 */
+  var pos = [[46,150],[110,118],[166,132],[214,92],[262,62],[86,64]];
+  var map = document.getElementById('map');
+  pos.forEach(function(p, i){
+    var d = document.createElement('button');
+    d.className = 't-map__dot';
+    d.style.left = (p[0] / 320 * 100) + '%';
+    d.style.top = (p[1] / 200 * 100) + '%';
+    d.setAttribute('aria-label', data[i].name);
+    d.innerHTML = '<span>' + data[i].name + '</span>';
+    d.addEventListener('click', function(){ go(i); });
+    map.appendChild(d);
+  });
+
+  /* 指示点 */
+  scenes.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', '场景 ' + (i + 1));
+    if(i === 0) b.className = 'is-on';
+    b.addEventListener('click', function(){ go(i); });
+    dots.appendChild(b);
+  });
+
+  function go(i){
+    idx = (i + total) % total;
+    world.style.transform = 'translateX(' + (-idx * 50) + '%)';
+    [].forEach.call(dots.children, function(d, k){ d.classList.toggle('is-on', k === idx); });
+    [].forEach.call(map.querySelectorAll('.t-map__dot'), function(d, k){ d.classList.toggle('is-on', k === idx); });
+    document.getElementById('cName').textContent = data[idx].name;
+    document.getElementById('cEn').textContent = data[idx].en;
+    document.getElementById('iName').textContent = data[idx].name;
+    document.getElementById('iDesc').textContent = data[idx].desc;
+    document.getElementById('iWalk').textContent = data[idx].walk;
+    document.getElementById('iOpen').textContent = data[idx].open;
+    document.getElementById('iNo').textContent = ('0' + (idx + 1)).slice(-2) + ' / ' + ('0' + total).slice(-2);
+    var t = document.getElementById('iTags');
+    t.innerHTML = '';
+    data[idx].tags.forEach(function(x){
+      var s = document.createElement('span'); s.textContent = x; t.appendChild(s);
+    });
+    [].forEach.call(document.querySelectorAll('.t-hot'), function(h){
+      h.classList.toggle('is-on', +h.dataset.i === idx);
+    });
+  }
+
+  document.getElementById('next').addEventListener('click', function(){ stop(); go(idx + 1); });
+  document.getElementById('prev').addEventListener('click', function(){ stop(); go(idx - 1); });
+
+  /* 自动巡游 */
+  var playBtn = document.getElementById('play');
+  function stop(){ playing = false; playBtn.classList.remove('t-btn--on'); clearInterval(timer); }
+  playBtn.addEventListener('click', function(){
+    if(playing){ stop(); return; }
+    playing = true; playBtn.classList.add('t-btn--on');
+    timer = setInterval(function(){ go(idx + 1); }, 3200);
+  });
+
+  /* 热点 */
+  [].forEach.call(document.querySelectorAll('.t-hot'), function(h){
+    h.addEventListener('click', function(e){
+      e.stopPropagation();
+      stop();
+      go(+h.dataset.i);
+    });
+  });
+
+  /* 拖拽 / 滑动 */
+  var sx = 0, dragging = false, moved = 0;
+  stage.addEventListener('pointerdown', function(e){
+    dragging = true; sx = e.clientX; moved = 0; stage.classList.add('is-drag');
+  });
+  stage.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    moved = e.clientX - sx;
+  });
+  window.addEventListener('pointerup', function(){
+    if(!dragging) return;
+    dragging = false; stage.classList.remove('is-drag');
+    if(Math.abs(moved) > 60){ stop(); go(moved < 0 ? idx + 1 : idx - 1); }
+  });
+
+  go(0);
+})();
+</script>
+</body>
+</html>

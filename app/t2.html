@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>A—02 学校门户网站与系部网页设计 · 数字形象模板库</title>
+<meta name="description" content="计算机应用技术 A—02 模板：信息工程系门户网站，含栏目体系、通知公告、专业介绍、师资成果与完整信息架构。">
+<meta name="theme-color" content="#F5F2EB">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/template.css">
+<style>
+/* ===== A—02 专属：系部门户 ===== */
+.d-portal{
+  background:var(--bg-elev);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.p-top{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  padding:.55rem clamp(1rem,3vw,2.2rem);background:var(--bg-deep);
+  font-size:.7rem;color:var(--fg-3);border-bottom:1px solid var(--line-soft);flex-wrap:wrap;
+}
+.p-top__l{display:flex;gap:1.2rem;align-items:center}
+.p-top__l b{color:var(--fg-2);font-weight:600;letter-spacing:.04em}
+.p-top__r{display:flex;gap:1rem}
+.p-top__r a:hover{color:var(--accent)}
+.p-hd{
+  display:flex;align-items:center;gap:1.4rem;padding:clamp(1rem,2.6vw,1.5rem) clamp(1rem,3vw,2.2rem);
+  border-bottom:1px solid var(--line-soft);flex-wrap:wrap;
+}
+.p-logo{display:flex;align-items:center;gap:.75rem}
+.p-logo__mark{
+  width:40px;height:40px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;
+  font-family:var(--serif);font-size:1rem;flex:none;position:relative;
+}
+.p-logo__mark::after{content:"";position:absolute;inset:3px;border-radius:50%;border:1px solid rgba(255,255,255,.35)}
+.p-logo__t b{display:block;font-family:var(--serif);font-size:1.05rem;letter-spacing:.06em;line-height:1.3}
+.p-logo__t span{font-size:.62rem;letter-spacing:.14em;color:var(--fg-3)}
+.p-search{margin-left:auto;display:flex;align-items:center;gap:.4rem;border:1px solid var(--line);border-radius:999px;padding:.3rem .3rem .3rem .9rem;background:var(--bg)}
+.p-search input{border:0;background:none;outline:none;font:inherit;font-size:.8rem;width:130px;color:var(--fg)}
+.p-search input::placeholder{color:var(--fg-3)}
+.p-search button{width:26px;height:26px;border-radius:50%;background:var(--bg-deep);display:grid;place-items:center;color:var(--fg-2)}
+.p-search button svg{width:13px;height:13px}
+.p-nav{display:flex;gap:.1rem;padding:0 clamp(1rem,3vw,2.2rem);border-bottom:1px solid var(--line-soft);overflow-x:auto;scrollbar-width:none}
+.p-nav::-webkit-scrollbar{display:none}
+.p-nav a{
+  padding:.82rem 1rem;font-size:.84rem;color:var(--fg-2);white-space:nowrap;position:relative;
+  transition:color .25s;
+}
+.p-nav a:hover{color:var(--accent)}
+.p-nav a.is-on{color:var(--accent);font-weight:600}
+.p-nav a.is-on::after{content:"";position:absolute;left:1rem;right:1rem;bottom:-1px;height:2px;background:var(--accent)}
+
+/* 主视觉 */
+.p-hero{display:grid;grid-template-columns:1.55fr 1fr;gap:1px;background:var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.p-lead{
+  position:relative;min-height:clamp(260px,32vw,360px);display:flex;flex-direction:column;justify-content:flex-end;
+  padding:clamp(1.3rem,3vw,2.2rem);overflow:hidden;
+  background:linear-gradient(150deg,#2A3B42,#16232A 60%,#0E171C);color:#F3EDE1;
+}
+.p-lead::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 78% 18%,rgba(198,75,57,.42),transparent 58%),
+             repeating-linear-gradient(118deg,transparent 0 30px,rgba(255,255,255,.045) 30px 31px);
+}
+.p-lead__in{position:relative;z-index:2;max-width:44ch}
+.p-lead__k{font-family:var(--mono);font-size:.6rem;letter-spacing:.26em;color:rgba(243,237,225,.6);margin-bottom:.8rem}
+.p-lead h2{font-family:var(--serif);font-size:clamp(1.35rem,2.8vw,2rem);line-height:1.45;font-weight:600;letter-spacing:.02em}
+.p-lead p{font-size:.82rem;line-height:1.9;color:rgba(243,237,225,.72);margin-top:.8rem}
+.p-lead__foot{display:flex;gap:1rem;margin-top:1.6rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;color:rgba(243,237,225,.55)}
+.p-side{background:var(--bg-elev);display:flex;flex-direction:column}
+.p-side__hd{
+  display:flex;justify-content:space-between;align-items:center;padding:.8rem 1.1rem;
+  border-bottom:1px solid var(--line-soft);
+}
+.p-side__hd b{font-family:var(--serif);font-size:.9rem}
+.p-side__hd span{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;color:var(--fg-3)}
+.p-side ul{flex:1;display:flex;flex-direction:column}
+.p-side li{border-bottom:1px dashed var(--line-soft)}
+.p-side li:last-child{border:0}
+.p-side li a{
+  display:flex;gap:.7rem;align-items:flex-start;padding:.72rem 1.1rem;
+  transition:background .25s;
+}
+.p-side li a:hover{background:var(--accent-soft)}
+.p-side .dt{
+  font-family:var(--mono);font-size:.62rem;color:var(--fg-3);border:1px solid var(--line);
+  border-radius:4px;padding:.1rem .3rem;flex:none;margin-top:.22rem;
+}
+.p-side .tt{font-size:.79rem;line-height:1.6;color:var(--fg-2)}
+.p-side li a:hover .tt{color:var(--accent)}
+
+/* 快捷条 */
+.p-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.p-quick a{
+  background:var(--bg-elev);padding:1rem 1.1rem;display:flex;align-items:center;gap:.7rem;
+  transition:background .3s;
+}
+.p-quick a:hover{background:var(--accent-soft)}
+.p-quick i{
+  width:30px;height:30px;border-radius:8px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;flex:none;
+}
+.p-quick i svg{width:15px;height:15px}
+.p-quick b{font-size:.82rem;font-weight:600;display:block;line-height:1.5}
+.p-quick span{font-size:.66rem;color:var(--fg-3)}
+
+/* 内容区 */
+.p-body{padding:clamp(1.5rem,3.5vw,2.6rem) clamp(1rem,3vw,2.2rem)}
+.p-sec{margin-bottom:clamp(1.8rem,3.5vw,2.6rem)}
+.p-sec__hd{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.p-sec__hd h3{font-family:var(--serif);font-size:1.15rem;font-weight:600;display:flex;align-items:center;gap:.6rem}
+.p-sec__hd h3::before{content:"";width:3px;height:16px;background:var(--accent);border-radius:2px}
+.p-sec__hd .more{font-size:.72rem;color:var(--fg-3);display:inline-flex;gap:.3rem;align-items:center}
+.p-sec__hd .more:hover{color:var(--accent)}
+
+/* 新闻卡 */
+.p-news{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.p-nc{border:1px solid var(--line-soft);border-radius:var(--r);overflow:hidden;background:var(--bg);transition:transform .4s var(--ease),box-shadow .4s}
+.p-nc:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.p-nc__img{height:100px;position:relative;overflow:hidden;background:var(--c)}
+.p-nc__img::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(70deg,transparent 0 14px,rgba(255,255,255,.13) 14px 15px)}
+.p-nc__img span{
+  position:absolute;left:.6rem;top:.6rem;font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;
+  background:rgba(0,0,0,.42);color:#fff;padding:.14rem .4rem;border-radius:3px;z-index:2;
+}
+.p-nc__b{padding:.8rem .9rem 1rem}
+.p-nc__b h4{font-size:.85rem;line-height:1.65;font-weight:600;margin-bottom:.4rem}
+.p-nc__b p{font-size:.72rem;color:var(--fg-3);line-height:1.7}
+.p-nc__b time{display:block;font-family:var(--mono);font-size:.6rem;color:var(--fg-3);margin-top:.6rem;letter-spacing:.08em}
+
+/* 专业卡 */
+.p-majors{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.p-mj{border:1px solid var(--line-soft);border-radius:var(--r);padding:1.2rem;background:var(--bg);position:relative;overflow:hidden;transition:border-color .35s,background .35s}
+.p-mj:hover{border-color:var(--accent);background:var(--accent-soft)}
+.p-mj__n{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--accent);margin-bottom:.7rem}
+.p-mj h4{font-family:var(--serif);font-size:.98rem;font-weight:600;margin-bottom:.45rem}
+.p-mj p{font-size:.74rem;color:var(--fg-3);line-height:1.8}
+.p-mj__tags{display:flex;gap:.25rem;flex-wrap:wrap;margin-top:.8rem}
+.p-mj__tags span{font-size:.6rem;padding:.12rem .4rem;border-radius:3px;background:var(--bg-deep);color:var(--fg-3)}
+
+/* 数据条 */
+.p-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:var(--r);overflow:hidden}
+.p-stats div{background:var(--bg);padding:1.1rem;text-align:center}
+.p-stats b{display:block;font-family:var(--serif);font-size:1.6rem;line-height:1.2;color:var(--accent)}
+.p-stats span{font-size:.68rem;color:var(--fg-3)}
+
+/* 页脚 */
+.p-ft{
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  padding:1.2rem clamp(1rem,3vw,2.2rem);background:var(--bg-deep);border-top:1px solid var(--line-soft);
+  font-size:.68rem;color:var(--fg-3);line-height:1.9;
+}
+.p-ft b{color:var(--fg-2);font-weight:600}
+
+@media (max-width:860px){
+  .p-hero{grid-template-columns:1fr}
+  .p-news,.p-majors{grid-template-columns:1fr 1fr}
+  .p-quick{grid-template-columns:1fr 1fr}
+  .p-stats{grid-template-columns:1fr 1fr}
+  .p-search{margin-left:0;order:9;width:100%}
+  .p-search input{flex:1;width:auto}
+}
+@media (max-width:560px){
+  .p-news,.p-majors{grid-template-columns:1fr}
+  .p-top__r{display:none}
+  .p-logo__t b{font-size:.95rem}
+}
+</style>
+</head>
+<body class="major-app">
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="../index.html">
+      <span class="seal">匠</span>
+      <span class="brand__txt"><b>数字形象模板库</b><span>SUZHOU CRAFTSMANSHIP</span></span>
+    </a>
+    <nav class="nav__links" aria-label="主导航">
+      <a href="../index.html#major-app">计算机应用</a>
+      <a href="../index.html#major-net">计算机网络</a>
+      <a href="../index.html#major-cloud">云计算</a>
+      <a href="../index.html#topics">选题清单</a>
+    </nav>
+    <div class="nav__tools">
+      <button class="icon-btn theme-btn" aria-label="切换深浅色">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+      <button class="icon-btn burger" aria-label="菜单" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../index.html">返回首页 <span>HOME</span></a>
+  <a href="../index.html#major-app">计算机应用技术 <span>APP</span></a>
+  <a href="../index.html#major-net">计算机网络技术 <span>NET</span></a>
+  <a href="../index.html#major-cloud">云计算技术应用 <span>CLOUD</span></a>
+  <a href="../index.html#topics">选题清单 <span>TOPIC</span></a>
+  <div class="drawer__foot">A—02 · 学校门户网站与系部网页设计</div>
+</div>
+
+<main>
+<section class="thead">
+  <div class="wrap">
+    <nav class="crumb"><a href="../index.html">首页</a><i>/</i><a href="../index.html#major-app">计算机应用技术</a><i>/</i><span>A—02</span></nav>
+    <div class="thead__row">
+      <div>
+        <p class="thead__no"><i></i>A—02 · 网站</p>
+        <h1 class="h1">学校门户网站与<br>系部网页设计</h1>
+        <p class="lede thead__sub">一所学校在网上的“门厅”。信息架构先于视觉：谁来看、想看什么、几次点击能找到——想清楚这些，再谈好看。</p>
+        <div class="thead__tags">
+          <span class="tag tag--accent">信息架构</span>
+          <span class="tag">响应式栅格</span>
+          <span class="tag">栏目体系</span>
+          <span class="tag">内容可维护</span>
+        </div>
+      </div>
+      <div class="thead__side">
+        <span class="k">成果形式</span>
+        <span class="v">网站（多页）</span>
+        <span class="k">建议工作量</span>
+        <span class="v">7—9 周</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<article class="demo">
+  <div class="wrap">
+    <div class="demo__bar">
+      <span class="lbl">DEMO · 作品主体</span>
+      <span class="hint">信息工程系门户 · 示例内容，可滚动浏览</span>
+    </div>
+    <div class="d-portal">
+
+      <div class="p-top">
+        <div class="p-top__l"><b>江苏联合职业技术学院 · 张家港分院</b><span>信息工程系</span></div>
+        <div class="p-top__r"><a href="#">学生入口</a><a href="#">教师办公</a><a href="#">English</a></div>
+      </div>
+
+      <div class="p-hd">
+        <div class="p-logo">
+          <div class="p-logo__mark">信</div>
+          <div class="p-logo__t"><b>信息工程系</b><span>SCHOOL OF INFORMATION ENGINEERING</span></div>
+        </div>
+        <form class="p-search" onsubmit="return false">
+          <input type="search" placeholder="搜索专业、通知、作品…" aria-label="站内搜索" id="q">
+          <button type="submit" aria-label="搜索">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <nav class="p-nav">
+        <a href="#" class="is-on">系部概况</a>
+        <a href="#news">新闻动态</a>
+        <a href="#majors">专业设置</a>
+        <a href="#">师资队伍</a>
+        <a href="#">教学科研</a>
+        <a href="#">学生工作</a>
+        <a href="#">招生就业</a>
+        <a href="#">实训基地</a>
+      </nav>
+
+      <div class="p-hero">
+        <div class="p-lead">
+          <div class="p-lead__in">
+            <p class="p-lead__k">HEADLINE / 2026.11</p>
+            <h2>以“五心”育人，用数字讲述一所学校的样子</h2>
+            <p>信息工程系 2022 级毕业设计展开展，三个专业、四十七件作品在实训楼三层同时亮相。</p>
+            <div class="p-lead__foot"><span>教务处</span><span>2026-11-12</span><span>阅读 1,248</span></div>
+          </div>
+        </div>
+        <div class="p-side">
+          <div class="p-side__hd"><b>通知公告</b><span>NOTICE</span></div>
+          <ul id="notices">
+            <li><a href="#" data-k="毕业设计 答辩 安排"><span class="dt">11-20</span><span class="tt">关于 2022 级毕业设计答辩安排的通知</span></a></li>
+            <li><a href="#" data-k="实训室 开放 时间"><span class="dt">11-18</span><span class="tt">实训室开放时间调整及预约方式说明</span></a></li>
+            <li><a href="#" data-k="奖学金 评定 公示"><span class="dt">11-15</span><span class="tt">2025—2026 学年奖学金评定结果公示</span></a></li>
+            <li><a href="#" data-k="技能大赛 报名 选拔"><span class="dt">11-10</span><span class="tt">省职业院校技能大赛校内选拔报名启动</span></a></li>
+            <li><a href="#" data-k="选课 教务 系统"><span class="dt">11-06</span><span class="tt">下学期选课系统开放时间及注意事项</span></a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="p-quick">
+        <a href="#">
+          <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></i>
+          <div><b>教务系统</b><span>课表 · 成绩 · 选课</span></div>
+        </a>
+        <a href="#">
+          <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3l8 4v5c0 4.4-3.4 8-8 9-4.6-1-8-4.6-8-9V7l8-4z"/></svg></i>
+          <div><b>实训预约</b><span>机房 · 设备 · 工位</span></div>
+        </a>
+        <a href="#">
+          <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 19V5m0 14h16M8 15V9m4 6V6m4 9v-4"/></svg></i>
+          <div><b>作品展厅</b><span>历届毕业设计</span></div>
+        </a>
+        <a href="#">
+          <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="9" r="3.4"/><path d="M5 20c1.6-3.4 4-5 7-5s5.4 1.6 7 5"/></svg></i>
+          <div><b>招生咨询</b><span>专业介绍 · 联系方式</span></div>
+        </a>
+      </div>
+
+      <div class="p-body">
+        <section class="p-sec" id="news">
+          <div class="p-sec__hd">
+            <h3>新闻动态</h3>
+            <a class="more" href="#">全部新闻 →</a>
+          </div>
+          <div class="p-news" id="newsList">
+            <article class="p-nc" data-k="毕业设计 展览 作品">
+              <div class="p-nc__img" style="--c:linear-gradient(135deg,#C05B4A,#7A3B33)"><span>教学</span></div>
+              <div class="p-nc__b">
+                <h4>毕业设计展开展：四十七件作品同台</h4>
+                <p>从校园导览到数据大屏，三个专业的作品在同一个空间里互相观看。</p>
+                <time>2026-11-12</time>
+              </div>
+            </article>
+            <article class="p-nc" data-k="技能大赛 获奖 网络 系统">
+              <div class="p-nc__img" style="--c:linear-gradient(135deg,#3E6C7E,#1F3945)"><span>竞赛</span></div>
+              <div class="p-nc__b">
+                <h4>省赛归来：网络系统管理赛项获二等奖</h4>
+                <p>三名选手、四个月备赛，把一套故障排查流程练到闭眼也能走完。</p>
+                <time>2026-11-08</time>
+              </div>
+            </article>
+            <article class="p-nc" data-k="校企合作 实习 云计算">
+              <div class="p-nc__img" style="--c:linear-gradient(135deg,#5C8776,#2E4A3F)"><span>合作</span></div>
+              <div class="p-nc__b">
+                <h4>与本地云服务企业共建实训课程</h4>
+                <p>企业工程师走进课堂，把真实工单拆成六个可以练手的任务。</p>
+                <time>2026-11-05</time>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="p-sec" id="majors">
+          <div class="p-sec__hd">
+            <h3>专业设置</h3>
+            <a class="more" href="#">培养方案 →</a>
+          </div>
+          <div class="p-majors">
+            <article class="p-mj">
+              <p class="p-mj__n">01 / APPLICATION</p>
+              <h4>计算机应用技术</h4>
+              <p>面向数字内容与前端开发，练视觉、练交互、练把想法落到屏幕上。</p>
+              <div class="p-mj__tags"><span>前端开发</span><span>视觉设计</span><span>数据可视化</span></div>
+            </article>
+            <article class="p-mj">
+              <p class="p-mj__n">02 / NETWORK</p>
+              <h4>计算机网络技术</h4>
+              <p>面向网络组建与运维，从布线、配置到服务部署与安全管理。</p>
+              <div class="p-mj__tags"><span>网络组建</span><span>服务器运维</span><span>信息安全</span></div>
+            </article>
+            <article class="p-mj">
+              <p class="p-mj__n">03 / CLOUD</p>
+              <h4>云计算技术应用</h4>
+              <p>面向云平台部署与资源管理，理解虚拟化、容器与弹性调度。</p>
+              <div class="p-mj__tags"><span>虚拟化</span><span>容器</span><span>云运维</span></div>
+            </article>
+          </div>
+        </section>
+
+        <div class="p-stats">
+          <div><b>3</b><span>专业方向</span></div>
+          <div><b>47</b><span>本届毕业作品</span></div>
+          <div><b>12</b><span>校企合作单位</span></div>
+          <div><b>96%</b><span>对口就业率</span></div>
+        </div>
+      </div>
+
+      <div class="p-ft">
+        <div><b>信息工程系</b><br>江苏省张家港市 · 校园路 1 号</div>
+        <div style="text-align:right">电话 0512-XXXXXXXX<br>版权所有 © 信息工程系</div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<section class="spec">
+  <div class="wrap spec__grid">
+    <aside class="spec__aside">
+      <p class="eyebrow">设计说明</p>
+      <h2 class="h2" style="margin-top:.9rem">先架构，后视觉</h2>
+      <ul class="spec__facts">
+        <li><span>对应选题</span><b>学校门户网站与系部网页设计</b></li>
+        <li><span>成果形式</span><b>网站（多页 / 单页演示）</b></li>
+        <li><span>核心技术</span><b>HTML · CSS Grid · 原生 JS</b></li>
+        <li><span>页面数量</span><b>建议 6—9 个栏目页</b></li>
+        <li><span>适配</span><b>手机 / 平板 / 电脑</b></li>
+        <li><span>发布方式</span><b>GitHub Pages</b></li>
+      </ul>
+    </aside>
+    <div class="spec__body">
+      <div class="spec__item reveal">
+        <h3><em>01</em>选题背景</h3>
+        <p>学校门户是家长、考生、在校生和企业第一次“认识”学校的地方，但多数院系页面仍停留在“栏目堆叠”：通知与新闻混在一起，最重要的三条信息被埋在第三屏。本选题从信息架构入手，先做卡片分类与任务路径，再决定视觉，目标是让四类典型访客都能在三次点击内找到答案。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>02</em>设计思路</h3>
+        <p>页面按“身份”而非“部门”组织：顶部保留四个高频入口（教务、实训、展厅、招生），主体用“一主三副”的新闻版式，避免轮播图吃掉全部注意力。</p>
+        <ul>
+          <li>首屏只做一件事：让访客知道这是哪个系、能提供什么。</li>
+          <li>通知公告用“日期块 + 标题”的紧凑列表，一屏可看五条。</li>
+          <li>专业介绍用三张等高卡片，标签写清技能点而非课程名。</li>
+          <li>配色克制：以纸白为底，朱红仅用于强调与分隔。</li>
+        </ul>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>03</em>“五心”主题体现</h3>
+        <p><b>红心</b>：栏目里保留“服务地方产业”的校企合作板块，把专业与张家港的产业现场连起来。<b>仁心</b>：文案不用行政腔，“企业工程师走进课堂”这类具体叙述替代口号。<b>恒心</b>：栏目结构改了四稿，删掉两个自认为好看但无人点击的模块。<b>匠心</b>：字号、行高、间距建立统一标尺，全站只用四级字号。<b>创心</b>：用原生 JS 做站内即时筛选，不引入任何框架。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>04</em>技术实现</h3>
+        <p>栅格以 CSS Grid 为主，配合 clamp() 做流式字号；移动端在 860px、560px 两个断点重排。</p>
+        <div class="chips">
+          <span>CSS Grid 主栅格</span>
+          <span>clamp() 流式排版</span>
+          <span>语义化 header/nav/main</span>
+          <span>输入即筛选（原生 JS）</span>
+          <span>SVG 线性图标</span>
+          <span>无外部依赖</span>
+        </div>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>05</em>可拓展方向</h3>
+        <ul>
+          <li>拆分出“师资队伍”“实训基地”等独立栏目页，形成完整站点。</li>
+          <li>把新闻区接入后台管理，实现图文发布与审核（可对接 N—01 模板）。</li>
+          <li>增加无障碍优化：跳转链接、焦点样式、对比度校验。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pager">
+  <div class="wrap pager__in">
+    <a href="t1.html" class="prev">
+      <span class="k">← 上一个模板</span>
+      <span class="t">A—01 校园动态视觉与交互设计</span>
+    </a>
+    <a href="t3.html" class="next">
+      <span class="k">下一个模板 →</span>
+      <span class="t">A—03 校园数据可视化展示</span>
+    </a>
+  </div>
+</nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__bar">
+      <span>© <span data-year>2026</span> 信息工程系 · 毕业设计教学参考</span>
+      <span class="mono">A—02 · DEPARTMENT PORTAL</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/base.js"></script>
+<script>
+(function(){
+  var q = document.getElementById('q');
+  if(!q) return;
+  var items = [].slice.call(document.querySelectorAll('#newsList .p-nc, #notices li'));
+  q.addEventListener('input', function(){
+    var v = q.value.trim();
+    items.forEach(function(el){
+      var k = (el.dataset.k || '') + el.textContent;
+      el.style.display = (!v || k.indexOf(v) > -1) ? '' : 'none';
+    });
+  });
+})();
+</script>
+</body>
+</html>

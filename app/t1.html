@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>A—01 校园动态视觉与交互设计 · 数字形象模板库</title>
+<meta name="description" content="计算机应用技术 A—01 模板：以滚动叙事与互动时间轴，把校园的四季、一日与专业群做成一条可感可玩的长页。">
+<meta name="theme-color" content="#F5F2EB">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/template.css">
+<style>
+/* ===== A—01 专属：动态视觉长页 ===== */
+.d-ink{
+  --dk:#121A1F; --dk2:#1A242A; --pa:#F3EDE1; --pa2:#C9C0AE;
+  --rd:#C64B39; --jd:#5E8B78; --gd:#C0A06A;
+  background:var(--dk);color:var(--pa);
+  border-radius:var(--r-lg);overflow:hidden;position:relative;
+  border:1px solid rgba(255,255,255,.06);
+}
+.d-ink *{box-sizing:border-box}
+
+/* 主视觉 */
+.a1-hero{position:relative;min-height:78vh;display:flex;align-items:flex-end;overflow:hidden;padding:clamp(2rem,6vw,4.5rem)}
+.a1-hero__bg{position:absolute;inset:0;overflow:hidden}
+.a1-hero__bg svg{position:absolute;bottom:-2%;left:-10%;width:120%;height:70%;opacity:.55}
+.a1-hero__bg::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 20%,rgba(198,75,57,.25),transparent 60%),
+             linear-gradient(180deg,transparent 40%,var(--dk) 96%);
+}
+.a1-hero__grain{
+  position:absolute;inset:0;opacity:.13;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+.a1-hero__in{position:relative;z-index:2;width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap}
+.a1-kicker{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.3em;color:var(--gd);
+  display:flex;align-items:center;gap:.7rem;margin-bottom:1.2rem;
+}
+.a1-kicker::before{content:"";width:30px;height:1px;background:var(--gd)}
+.a1-title{
+  font-family:var(--serif);font-weight:600;font-size:clamp(2.4rem,7.2vw,4.6rem);
+  line-height:1.12;letter-spacing:.02em;color:var(--pa);margin:0;
+}
+.a1-title em{font-style:normal;color:var(--rd)}
+.a1-sub{margin-top:1.3rem;max-width:38ch;color:var(--pa2);font-size:.92rem;line-height:1.95}
+.a1-hero__side{text-align:right;font-size:.7rem;letter-spacing:.16em;color:var(--pa2);line-height:2}
+.a1-hero__side b{display:block;font-family:var(--serif);font-size:2.6rem;color:var(--rd);letter-spacing:0;line-height:1}
+.a1-scroll{
+  position:absolute;left:clamp(2rem,6vw,4.5rem);bottom:1.4rem;z-index:3;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.28em;color:var(--pa2);
+  display:flex;align-items:center;gap:.6rem;
+}
+.a1-scroll i{width:36px;height:1px;background:var(--rd);display:block;position:relative;overflow:hidden}
+.a1-scroll i::after{content:"";position:absolute;inset:0;background:var(--pa);animation:sweep 2.6s var(--ease) infinite}
+@keyframes sweep{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+/* 跑马灯 */
+.a1-marquee{
+  border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09);
+  padding:1.1rem 0;overflow:hidden;white-space:nowrap;
+}
+.a1-marquee__track{display:inline-flex;gap:2.4rem;animation:march 28s linear infinite}
+.a1-marquee span{
+  font-family:var(--serif);font-size:clamp(1.1rem,2.4vw,1.6rem);color:rgba(243,237,225,.5);
+  display:inline-flex;align-items:center;gap:2.4rem;
+}
+.a1-marquee span::after{content:"●";font-size:.4rem;color:var(--rd);opacity:.8}
+@keyframes march{to{transform:translateX(-50%)}}
+
+/* 四季 */
+.a1-seasons{padding:clamp(2.5rem,6vw,4.5rem) clamp(1.4rem,5vw,4.5rem)}
+.a1-sea{
+  display:grid;grid-template-columns:auto 1fr 1.1fr;gap:clamp(1.2rem,3vw,2.6rem);
+  align-items:center;padding:clamp(1.6rem,3vw,2.4rem) 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.a1-sea:last-child{border-bottom:0}
+.a1-sea__n{font-family:var(--serif);font-size:clamp(2.4rem,5vw,3.4rem);line-height:1;color:rgba(243,237,225,.18);font-weight:600}
+.a1-sea__t h3{font-family:var(--serif);font-size:clamp(1.3rem,2.4vw,1.7rem);font-weight:600;margin-bottom:.5rem;letter-spacing:.04em}
+.a1-sea__t p{font-size:.86rem;line-height:1.95;color:var(--pa2);max-width:34ch}
+.a1-sea__v{
+  height:clamp(120px,16vw,168px);border-radius:10px;position:relative;overflow:hidden;
+  background:var(--s);border:1px solid rgba(255,255,255,.07);
+}
+.a1-sea__v::after{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(105deg,transparent 0 22px,rgba(255,255,255,.07) 22px 23px);
+  transition:transform 1s var(--ease);
+}
+.a1-sea:hover .a1-sea__v::after{transform:translateX(23px)}
+.a1-sea__v b{
+  position:absolute;right:.9rem;bottom:.6rem;font-family:var(--mono);
+  font-size:.6rem;letter-spacing:.16em;color:rgba(255,255,255,.72);
+}
+
+/* 一日互动 */
+.a1-day{padding:clamp(2.5rem,6vw,4rem) clamp(1.4rem,5vw,4.5rem);background:var(--dk2);border-top:1px solid rgba(255,255,255,.07)}
+.a1-day__hd{display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem}
+.a1-day__hd h3{font-family:var(--serif);font-size:clamp(1.3rem,2.4vw,1.7rem);letter-spacing:.04em}
+.a1-day__hd p{font-size:.76rem;color:var(--pa2);letter-spacing:.1em}
+.a1-day__grid{display:grid;grid-template-columns:auto 1fr;gap:clamp(1.5rem,4vw,3.4rem);align-items:center}
+.a1-clock{position:relative;width:clamp(150px,20vw,200px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.13);display:grid;place-items:center;flex:none}
+.a1-clock::before{content:"";position:absolute;inset:9%;border-radius:50%;border:1px dashed rgba(255,255,255,.1)}
+.a1-clock__hand{
+  position:absolute;left:50%;bottom:50%;width:1.5px;height:36%;background:var(--rd);
+  transform-origin:50% 100%;transform:rotate(0deg);
+  transition:transform 1s var(--ease);border-radius:2px;
+}
+.a1-clock__hand::after{content:"";position:absolute;left:50%;top:-3px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:var(--rd)}
+.a1-clock__c{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--pa)}
+.a1-clock__lb{position:relative;z-index:2;text-align:center}
+.a1-clock__lb b{display:block;font-family:var(--serif);font-size:1.5rem;line-height:1.1}
+.a1-clock__lb span{font-family:var(--mono);font-size:.56rem;letter-spacing:.18em;color:var(--pa2)}
+.a1-tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.3rem}
+.a1-tab{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;padding:.42rem .8rem;border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);color:var(--pa2);transition:.35s var(--ease);
+}
+.a1-tab:hover{border-color:rgba(255,255,255,.4);color:var(--pa)}
+.a1-tab.is-on{background:var(--rd);border-color:var(--rd);color:#fff}
+.a1-panel h4{font-family:var(--serif);font-size:clamp(1.15rem,2vw,1.4rem);margin-bottom:.5rem;font-weight:600}
+.a1-panel p{font-size:.88rem;line-height:2;color:var(--pa2);max-width:52ch;min-height:3.6em}
+.a1-panel__tags{display:flex;gap:.35rem;margin-top:1rem;flex-wrap:wrap}
+.a1-panel__tags span{font-size:.65rem;letter-spacing:.08em;padding:.2rem .55rem;border-radius:4px;background:rgba(255,255,255,.07);color:var(--pa2)}
+.a1-fade{animation:fadeUp .55s var(--ease)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+
+/* 微交互 */
+.a1-micro{padding:clamp(2.5rem,6vw,4rem) clamp(1.4rem,5vw,4.5rem);border-top:1px solid rgba(255,255,255,.07)}
+.a1-micro h3{font-family:var(--serif);font-size:clamp(1.3rem,2.4vw,1.7rem);margin-bottom:.5rem;letter-spacing:.04em}
+.a1-micro>p{font-size:.84rem;color:var(--pa2);margin-bottom:2rem}
+.a1-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem}
+.a1-card{
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.3rem;
+  background:rgba(255,255,255,.025);min-height:190px;display:flex;flex-direction:column;
+  transition:transform .45s var(--ease),background .4s,border-color .4s;position:relative;overflow:hidden;
+}
+.a1-card:hover{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.22)}
+.a1-card__k{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--gd);margin-bottom:auto}
+.a1-card h4{font-family:var(--serif);font-size:1.05rem;margin:.9rem 0 .4rem;font-weight:600}
+.a1-card p{font-size:.76rem;line-height:1.85;color:var(--pa2)}
+.a1-card__box{
+  margin-top:1rem;height:44px;border-radius:6px;background:rgba(255,255,255,.06);
+  display:grid;place-items:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--pa2);
+  position:relative;overflow:hidden;cursor:pointer;
+}
+.a1-card__box::after{
+  content:"";position:absolute;inset:0;background:var(--rd);opacity:0;transform:scaleX(0);
+  transform-origin:left;transition:transform .5s var(--ease),opacity .4s;
+}
+.a1-card__box:hover::after{transform:scaleX(1);opacity:.9}
+.a1-card__box span{position:relative;z-index:2;transition:color .35s}
+.a1-card__box:hover span{color:#fff}
+
+/* 收尾 */
+.a1-out{padding:clamp(3rem,7vw,5rem) clamp(1.4rem,5vw,4.5rem);text-align:center;border-top:1px solid rgba(255,255,255,.07);position:relative}
+.a1-out p{font-family:var(--serif);font-size:clamp(1.3rem,3.2vw,2.1rem);line-height:1.6;color:var(--pa);max-width:22ch;margin-inline:auto}
+.a1-out small{display:block;margin-top:1.4rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.26em;color:rgba(243,237,225,.34)}
+
+@media (max-width:820px){
+  .a1-hero{min-height:64vh}
+  .a1-hero__side{display:none}
+  .a1-sea{grid-template-columns:auto 1fr;gap:1.2rem}
+  .a1-sea__v{grid-column:1/-1;height:110px}
+  .a1-day__grid{grid-template-columns:1fr}
+  .a1-clock{margin-inline:auto}
+  .a1-cards{grid-template-columns:1fr}
+  .a1-panel p{min-height:0}
+}
+</style>
+</head>
+<body class="major-app">
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="../index.html">
+      <span class="seal">匠</span>
+      <span class="brand__txt"><b>数字形象模板库</b><span>SUZHOU CRAFTSMANSHIP</span></span>
+    </a>
+    <nav class="nav__links" aria-label="主导航">
+      <a href="../index.html#major-app">计算机应用</a>
+      <a href="../index.html#major-net">计算机网络</a>
+      <a href="../index.html#major-cloud">云计算</a>
+      <a href="../index.html#topics">选题清单</a>
+    </nav>
+    <div class="nav__tools">
+      <button class="icon-btn theme-btn" aria-label="切换深浅色">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+      <button class="icon-btn burger" aria-label="菜单" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../index.html">返回首页 <span>HOME</span></a>
+  <a href="../index.html#major-app">计算机应用技术 <span>APP</span></a>
+  <a href="../index.html#major-net">计算机网络技术 <span>NET</span></a>
+  <a href="../index.html#major-cloud">云计算技术应用 <span>CLOUD</span></a>
+  <a href="../index.html#topics">选题清单 <span>TOPIC</span></a>
+  <div class="drawer__foot">A—01 · 校园动态视觉与交互设计</div>
+</div>
+
+<main>
+<!-- 页头 -->
+<section class="thead">
+  <div class="wrap">
+    <nav class="crumb"><a href="../index.html">首页</a><i>/</i><a href="../index.html#major-app">计算机应用技术</a><i>/</i><span>A—01</span></nav>
+    <div class="thead__row">
+      <div>
+        <p class="thead__no"><i></i>A—01 · 动态 · 交互</p>
+        <h1 class="h1">校园动态视觉与<br>交互设计</h1>
+        <p class="lede thead__sub">把校园的四季、一日与专业群，做成一条会呼吸的长页。滚动即叙事，点击即有回应——用动效代替形容词，让“这所学校”被感受到。</p>
+        <div class="thead__tags">
+          <span class="tag tag--accent">滚动叙事</span>
+          <span class="tag">CSS 动效</span>
+          <span class="tag">交互组件</span>
+          <span class="tag">响应式长页</span>
+        </div>
+      </div>
+      <div class="thead__side">
+        <span class="k">成果形式</span>
+        <span class="v">网站 / 动态</span>
+        <span class="k">建议工作量</span>
+        <span class="v">6—8 周</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 演示主体 -->
+<article class="demo">
+  <div class="wrap">
+    <div class="demo__bar">
+      <span class="lbl">DEMO · 作品主体</span>
+      <span class="hint">以下即作品界面本身，可滚动、可点击 · 示例数据</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="d-ink">
+
+      <!-- 主视觉 -->
+      <section class="a1-hero">
+        <div class="a1-hero__bg">
+          <svg viewBox="0 0 1200 500" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 340 C 160 260, 260 300, 380 250 S 560 300, 680 240 S 860 300, 990 250 S 1130 280, 1200 250 L1200 500 L0 500Z" fill="#1F2C33"/>
+            <path d="M0 400 C 180 340, 320 380, 460 330 S 640 380, 780 330 S 980 390, 1120 340 L1200 330 L1200 500 L0 500Z" fill="#26363E" opacity=".9"/>
+            <path d="M0 455 C 220 410, 380 445, 540 405 S 760 450, 940 400 S 1100 430, 1200 410 L1200 500 L0 500Z" fill="#31454E" opacity=".85"/>
+          </svg>
+          <div class="a1-hero__grain"></div>
+        </div>
+        <div class="a1-hero__in">
+          <div>
+            <p class="a1-kicker">CAMPUS IN MOTION / 2026</p>
+            <h2 class="a1-title">一所学校的<br><em>十二个月</em></h2>
+            <p class="a1-sub">从早春的樱花道到深冬的自习灯火。<br>我们不用形容词，用节奏、光影与一次点击。</p>
+          </div>
+          <div class="a1-hero__side">
+            <b>12</b>MONTHS<br>
+            <b>06</b>MOMENTS A DAY<br>
+            <b>∞</b>SCROLL
+          </div>
+        </div>
+        <div class="a1-scroll"><i></i>SCROLL TO EXPLORE</div>
+      </section>
+
+      <!-- 跑马灯 -->
+      <div class="a1-marquee" aria-hidden="true">
+        <div class="a1-marquee__track" id="mq">
+          <span>计算机应用技术</span><span>计算机网络技术</span><span>云计算技术应用</span><span>数字媒体</span><span>物联网应用</span><span>电子商务</span>
+          <span>计算机应用技术</span><span>计算机网络技术</span><span>云计算技术应用</span><span>数字媒体</span><span>物联网应用</span><span>电子商务</span>
+        </div>
+      </div>
+
+      <!-- 四季 -->
+      <section class="a1-seasons" id="seasons">
+        <div class="a1-sea reveal">
+          <div class="a1-sea__n">01</div>
+          <div class="a1-sea__t">
+            <h3>春 · 樱花道</h3>
+            <p>三月，进校门直走两百步。花瓣落在实训楼的台阶上，也落在同学扛着的设备箱上。</p>
+          </div>
+          <div class="a1-sea__v" style="--s:linear-gradient(135deg,#E8B4BC,#C97B8C 55%,#7E4B5B)">
+            <b>SPRING / 03—05</b>
+          </div>
+        </div>
+
+        <div class="a1-sea reveal">
+          <div class="a1-sea__n">02</div>
+          <div class="a1-sea__t">
+            <h3>夏 · 机房与蝉</h3>
+            <p>空调外机在窗外嗡嗡地响。屏幕里的进度条走到 100%，窗外那只蝉也叫到了最高音。</p>
+          </div>
+          <div class="a1-sea__v" style="--s:linear-gradient(135deg,#9FC6C0,#4E8A80 55%,#22453F)">
+            <b>SUMMER / 06—08</b>
+          </div>
+        </div>
+
+        <div class="a1-sea reveal">
+          <div class="a1-sea__n">03</div>
+          <div class="a1-sea__t">
+            <h3>秋 · 迎新与招新</h3>
+            <p>九月的横幅换了新的一批。展台前挤着刚来的学弟学妹，问得最多的是“这个我能学会吗”。</p>
+          </div>
+          <div class="a1-sea__v" style="--s:linear-gradient(135deg,#D8B47C,#B0733F 55%,#6B3F22)">
+            <b>AUTUMN / 09—11</b>
+          </div>
+        </div>
+
+        <div class="a1-sea reveal">
+          <div class="a1-sea__n">04</div>
+          <div class="a1-sea__t">
+            <h3>冬 · 自习的灯</h3>
+            <p>十二月，走廊尽头的教室还亮着。有人在改毕业设计，有人在等最后一个渲染完成。</p>
+          </div>
+          <div class="a1-sea__v" style="--s:linear-gradient(135deg,#8FA3B8,#4A5F78 55%,#232F3D)">
+            <b>WINTER / 12—02</b>
+          </div>
+        </div>
+      </section>
+
+      <!-- 一日互动 -->
+      <section class="a1-day">
+        <div class="a1-day__hd">
+          <h3>一日 · 六个时刻</h3>
+          <p>点击时间点切换 ↴</p>
+        </div>
+        <div class="a1-day__grid">
+          <div class="a1-clock" aria-hidden="true">
+            <div class="a1-clock__hand" id="hand"></div>
+            <div class="a1-clock__lb"><b id="clockTime">07:40</b><span>CAMPUS TIME</span></div>
+          </div>
+          <div>
+            <div class="a1-tabs" role="tablist" id="tabs">
+              <button class="a1-tab is-on" data-i="0" role="tab">06:40</button>
+              <button class="a1-tab" data-i="1" role="tab">08:00</button>
+              <button class="a1-tab" data-i="2" role="tab">12:10</button>
+              <button class="a1-tab" data-i="3" role="tab">15:30</button>
+              <button class="a1-tab" data-i="4" role="tab">18:20</button>
+              <button class="a1-tab" data-i="5" role="tab">21:00</button>
+            </div>
+            <div class="a1-panel" id="panel"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 微交互 -->
+      <section class="a1-micro">
+        <h3>三处微交互</h3>
+        <p>毕业设计不需要处处炫技，但要有三处“经得起放大看”的细节。</p>
+        <div class="a1-cards">
+          <article class="a1-card" data-tilt>
+            <span class="a1-card__k">01 / TILT</span>
+            <h4>指针倾斜卡片</h4>
+            <p>鼠标移动时按指针位置轻微倾斜，离开后带阻尼回正。</p>
+            <div class="a1-card__box"><span>移动指针试试</span></div>
+          </article>
+          <article class="a1-card">
+            <span class="a1-card__k">02 / REVEAL</span>
+            <h4>滚动入场</h4>
+            <p>元素进入视口 8% 时上浮淡入，同组之间有 80ms 递延。</p>
+            <div class="a1-card__box"><span>向下滚动可见</span></div>
+          </article>
+          <article class="a1-card">
+            <span class="a1-card__k">03 / SWEEP</span>
+            <h4>填充式悬停</h4>
+            <p>色块从左向右铺满，文字反白，300ms 内完成。</p>
+            <div class="a1-card__box"><span>悬停此处</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="a1-out">
+        <p>留下一个动作，比留下十个形容词更像“设计”。</p>
+        <small>CAMPUS DIGITAL IDENTITY · MOTION STUDY</small>
+      </section>
+    </div>
+  </div>
+</article>
+
+<!-- 设计说明 -->
+<section class="spec">
+  <div class="wrap spec__grid">
+    <aside class="spec__aside">
+      <p class="eyebrow">设计说明</p>
+      <h2 class="h2" style="margin-top:.9rem">滚动即叙事</h2>
+      <ul class="spec__facts">
+        <li><span>对应选题</span><b>校园动态视觉与交互设计</b></li>
+        <li><span>成果形式</span><b>网站 / 动态 / 动图</b></li>
+        <li><span>核心技术</span><b>HTML · CSS 动效 · 原生 JS</b></li>
+        <li><span>页面形态</span><b>单页滚动叙事长页</b></li>
+        <li><span>适配</span><b>手机 / 平板 / 电脑</b></li>
+        <li><span>发布方式</span><b>GitHub Pages</b></li>
+      </ul>
+    </aside>
+    <div class="spec__body">
+      <div class="spec__item reveal">
+        <h3><em>01</em>选题背景</h3>
+        <p>学校每年产生大量图文素材，却缺少一个“能一口气看完”的入口。招生季家长翻遍十几个公众号仍拼不出学校的样子；新生入学第一周也常找不到自己的位置。本选题以“一所学长的十二个月”为线索，用连续滚动的叙事替代分散的图文堆叠，让观看者在两三分钟内建立对校园的整体印象。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>02</em>设计思路</h3>
+        <p>整体采用“深墨底 + 宣纸白 + 朱砂红”的江南书房配色，避免常见的高饱和科技蓝，与学校所在地域气质呼应。叙事节奏按“总—分—点”展开：主视觉给情绪，四季给时间跨度，“一日六时刻”给可交互的细节落点，最后以一句主张收束。</p>
+        <ul>
+          <li>主视觉用三层山形剪影叠出纵深，滚动时以不同速率位移，形成视差。</li>
+          <li>四季用四组低饱和渐变作为“色卡”，让时间可被看见而不必依赖照片。</li>
+          <li>交互只保留三处：时间切换、指针倾斜、填充悬停——少而明确。</li>
+        </ul>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>03</em>“五心”主题体现</h3>
+        <p><b>红心</b>：结尾落在“把学校讲清楚”这一朴素职责上，指向服务地方的形象传播。<b>仁心</b>：文案避免宣传腔，写具体的花瓣、蝉鸣、走廊灯，保留温度。<b>恒心</b>：四季段落逐字打磨，一处文案改七版。<b>匠心</b>：动效统一使用同一条缓动曲线，时长控制在 300—1000ms。<b>创心</b>：用纯 CSS + 原生 JS 实现视差与微交互，不依赖第三方动画库。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>04</em>技术实现</h3>
+        <p>全站零依赖，单个 HTML 文件即可运行，便于答辩现场离线演示。</p>
+        <div class="chips">
+          <span>CSS 自定义属性控制色卡</span>
+          <span>IntersectionObserver 滚动入场</span>
+          <span>transform / opacity 合成层动画</span>
+          <span>pointermove 计算倾斜角度</span>
+          <span>prefers-reduced-motion 降级</span>
+          <span>SVG 剪影 + feTurbulence 颗粒</span>
+        </div>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>05</em>可拓展方向</h3>
+        <ul>
+          <li>接入真实校园摄影，把四季色卡替换为图片序列帧。</li>
+          <li>增加“专业群”分支页面，每个专业一段独立叙事。</li>
+          <li>导出 15 秒静帧动图，作为招生推文的配图版本。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pager">
+  <div class="wrap pager__in">
+    <a href="../index.html#major-app" class="prev">
+      <span class="k">← 返回</span>
+      <span class="t">计算机应用技术 · 选题总览</span>
+    </a>
+    <a href="t2.html" class="next">
+      <span class="k">下一个模板 →</span>
+      <span class="t">A—02 学校门户网站与系部网页设计</span>
+    </a>
+  </div>
+</nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__bar">
+      <span>© <span data-year>2026</span> 信息工程系 · 毕业设计教学参考</span>
+      <span class="mono">A—01 · CAMPUS MOTION</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/base.js"></script>
+<script>
+/* 一日六时刻 */
+(function(){
+  var data = [
+    { t:'06:40', h:'清晨 · 宿舍到教学楼', d:'路灯还没灭，食堂的蒸汽先起来了。第一批到教室的人，把窗帘拉开，光斜着落在键盘上。', tags:['晨读','通勤','自然光'] , deg: 200},
+    { t:'08:00', h:'上午 · 专业课', d:'投影亮起，讲台上的示范操作一步一停。有人记笔记，有人已经在自己电脑上跟着敲。', tags:['课堂','示范','跟练'], deg: 240 },
+    { t:'12:10', h:'中午 · 食堂与走廊', d:'排队的人从窗口拐到楼梯口。走廊展板上，上周的学生作品还没换下来。', tags:['食堂','展板','人流'], deg: 365 },
+    { t:'15:30', h:'下午 · 实训室', d:'机房的机器一起转起来，风扇声盖过人声。老师在一排排工位之间走动。', tags:['实训','设备','答疑'], deg: 465 },
+    { t:'18:20', h:'傍晚 · 球场与跑道', d:'天色从蓝转橘，球场灯一盏盏亮。有人跑步，有人坐在看台上改方案。', tags:['运动','夕阳','社团'], deg: 550 },
+    { t:'21:00', h:'夜里 · 自习与机房', d:'教学楼只剩几间亮着。屏幕的冷光映在脸上，进度条终于走完。', tags:['自习','灯光','收尾'], deg: 630 }
+  ];
+  var panel = document.getElementById('panel');
+  var hand = document.getElementById('hand');
+  var clock = document.getElementById('clockTime');
+  var tabs = document.getElementById('tabs');
+
+  function render(i){
+    var o = data[i];
+    panel.innerHTML = '<h4>'+o.h+'</h4><p>'+o.d+'</p><div class="a1-panel__tags">'+
+      o.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>';
+    panel.classList.remove('a1-fade');
+    void panel.offsetWidth;
+    panel.classList.add('a1-fade');
+    hand.style.transform = 'rotate('+o.deg+'deg)';
+    clock.textContent = o.t;
+  }
+  tabs.addEventListener('click', function(e){
+    var b = e.target.closest('.a1-tab');
+    if(!b) return;
+    tabs.querySelectorAll('.a1-tab').forEach(function(x){x.classList.remove('is-on');});
+    b.classList.add('is-on');
+    render(+b.dataset.i);
+  });
+  render(0);
+
+  /* 指针倾斜 */
+  document.querySelectorAll('[data-tilt]').forEach(function(card){
+    card.addEventListener('pointermove', function(e){
+      var r = card.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - .5;
+      var y = (e.clientY - r.top) / r.height - .5;
+      card.style.transform = 'perspective(700px) rotateY('+(x*7)+'deg) rotateX('+(-y*7)+'deg) translateY(-4px)';
+    });
+    card.addEventListener('pointerleave', function(){
+      card.style.transform = '';
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>A—03 校园数据可视化展示 · 数字形象模板库</title>
+<meta name="description" content="计算机应用技术 A—03 模板：校园数据可视化看板，含招生、教学、就业、空间四类数据与纯 SVG 图表实现。">
+<meta name="theme-color" content="#F5F2EB">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/template.css">
+<style>
+/* ===== A—03 专属：数据看板 ===== */
+.d-viz{
+  background:var(--bg-elev);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.v-top{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  padding:1.1rem clamp(1rem,3vw,1.8rem);border-bottom:1px solid var(--line-soft);
+}
+.v-top__l{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap}
+.v-top__l h2{font-family:var(--serif);font-size:1.15rem;font-weight:600;letter-spacing:.04em}
+.v-top__l span{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--fg-3)}
+.v-tabs{display:flex;gap:.3rem;background:var(--bg-deep);padding:.22rem;border-radius:999px}
+.v-tabs button{
+  font:inherit;font-size:.74rem;padding:.4rem .95rem;border-radius:999px;color:var(--fg-2);
+  transition:background .3s,color .3s;
+}
+.v-tabs button.is-on{background:var(--bg-elev);color:var(--accent);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+
+/* KPI */
+.v-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.v-kpi{background:var(--bg-elev);padding:1.1rem clamp(.8rem,2vw,1.4rem)}
+.v-kpi em{display:block;font-style:normal;font-size:.66rem;letter-spacing:.1em;color:var(--fg-3);margin-bottom:.5rem}
+.v-kpi b{display:block;font-family:var(--serif);font-size:clamp(1.5rem,2.6vw,2rem);line-height:1.1;letter-spacing:.01em}
+.v-kpi b i{font-style:normal;font-size:.62em;color:var(--fg-3);margin-left:.2em}
+.v-kpi u{display:block;text-decoration:none;font-size:.66rem;color:var(--jade);margin-top:.4rem}
+
+/* 网格 */
+.v-grid{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:1px;background:var(--line-soft);
+}
+.v-cell{background:var(--bg-elev);padding:clamp(1.1rem,2.4vw,1.6rem)}
+.v-cell--wide{grid-column:1/-1}
+.v-ct{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:1.1rem;flex-wrap:wrap}
+.v-ct h3{font-family:var(--serif);font-size:.92rem;font-weight:600}
+.v-ct span{font-family:var(--mono);font-size:.56rem;letter-spacing:.16em;color:var(--fg-3)}
+.v-legend{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.64rem;color:var(--fg-3)}
+.v-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:.3rem;vertical-align:middle}
+
+/* 环形 */
+.v-donut{display:flex;align-items:center;gap:clamp(1rem,2.4vw,2rem);flex-wrap:wrap}
+.v-donut svg{width:clamp(140px,18vw,180px);height:auto;flex:none;overflow:visible}
+.v-donut circle{fill:none;stroke-width:13;transition:stroke-dasharray .9s var(--ease),stroke-width .3s}
+.v-donut g:hover circle{stroke-width:17}
+.v-donut__mid{text-align:center}
+.v-donut__list{flex:1;min-width:150px;max-width:330px;display:flex;flex-direction:column;gap:.6rem}
+.v-donut__list div{display:flex;justify-content:space-between;align-items:center;font-size:.74rem;gap:.6rem}
+.v-donut__list b{font-family:var(--mono);font-weight:500;color:var(--fg-2)}
+.v-donut__list .n{color:var(--fg-3);font-size:.64rem;margin-left:.4rem}
+.v-donut__list i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:.45rem}
+
+/* 横向条 */
+.v-bars{display:flex;flex-direction:column;gap:.95rem}
+.v-bar__t{display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:.35rem}
+.v-bar__t span{color:var(--fg-3);font-family:var(--mono);font-size:.68rem}
+.v-bar__track{height:7px;background:var(--bg-deep);border-radius:999px;overflow:hidden}
+.v-bar__fill{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),#D0705F);width:0;transition:width 1.1s var(--ease)}
+.v-bar:nth-child(2) .v-bar__fill{background:linear-gradient(90deg,#3F6E5E,#6C9A86)}
+.v-bar:nth-child(3) .v-bar__fill{background:linear-gradient(90deg,#2C5578,#5D87A8)}
+.v-bar:nth-child(4) .v-bar__fill{background:linear-gradient(90deg,#A8874F,#C8AC7C)}
+.v-bar:nth-child(5) .v-bar__fill{background:linear-gradient(90deg,#7A4A63,#A87A93)}
+
+/* 折线 */
+.v-line{position:relative}
+.v-line svg{width:100%;height:auto;overflow:visible}
+.v-line .grid-l{stroke:var(--line-soft);stroke-width:1}
+.v-line .axis-t{font-family:var(--mono);font-size:8px;fill:var(--fg-3)}
+.v-line .area{fill:url(#vArea)}
+.v-line .stroke{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.v-line .pt{fill:var(--bg-elev);stroke:var(--accent);stroke-width:2;cursor:pointer;transition:r .25s}
+.v-line .pt:hover{r:6}
+.v-tip{
+  position:absolute;pointer-events:none;background:var(--fg);color:var(--bg);
+  font-size:.66rem;padding:.25rem .5rem;border-radius:5px;transform:translate(-50%,-160%);
+  opacity:0;transition:opacity .2s;white-space:nowrap;z-index:5;
+}
+
+/* 热力 */
+.v-heat{display:flex;gap:.5rem;align-items:flex-start;overflow-x:auto;padding-bottom:.3rem}
+.v-heat__y{display:flex;flex-direction:column;gap:4px;flex:none;padding-top:0}
+.v-heat__y span{height:20px;line-height:20px;font-family:var(--mono);font-size:.54rem;color:var(--fg-3)}
+.v-heat__main{flex:1;min-width:0}
+.v-heat__grid{display:flex;flex-direction:column;gap:4px}
+.v-heat__row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.v-heat__row i{
+  width:auto;height:20px;border-radius:2px;display:block;cursor:pointer;
+  transition:transform .2s,outline-color .2s;outline:1px solid transparent;
+}
+.v-heat__row i:hover{transform:scale(1.3);outline-color:var(--fg)}
+.v-heat__x{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px}
+.v-heat__x span{text-align:center;font-family:var(--mono);font-size:.54rem;color:var(--fg-3)}
+.v-heat__foot{display:flex;justify-content:space-between;align-items:center;margin-top:.8rem;font-size:.62rem;color:var(--fg-3);flex-wrap:wrap;gap:.6rem}
+.v-scale{display:flex;align-items:center;gap:.25rem}
+.v-scale i{width:14px;height:8px;border-radius:1px;display:block}
+
+@media (max-width:900px){
+  .v-grid{grid-template-columns:1fr}
+  .v-kpis{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .v-donut{flex-direction:column;align-items:flex-start}
+  .v-tabs button{padding:.35rem .7rem;font-size:.7rem}
+}
+</style>
+</head>
+<body class="major-app">
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="../index.html">
+      <span class="seal">匠</span>
+      <span class="brand__txt"><b>数字形象模板库</b><span>SUZHOU CRAFTSMANSHIP</span></span>
+    </a>
+    <nav class="nav__links" aria-label="主导航">
+      <a href="../index.html#major-app">计算机应用</a>
+      <a href="../index.html#major-net">计算机网络</a>
+      <a href="../index.html#major-cloud">云计算</a>
+      <a href="../index.html#topics">选题清单</a>
+    </nav>
+    <div class="nav__tools">
+      <button class="icon-btn theme-btn" aria-label="切换深浅色">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+      <button class="icon-btn burger" aria-label="菜单" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../index.html">返回首页 <span>HOME</span></a>
+  <a href="../index.html#major-app">计算机应用技术 <span>APP</span></a>
+  <a href="../index.html#major-net">计算机网络技术 <span>NET</span></a>
+  <a href="../index.html#major-cloud">云计算技术应用 <span>CLOUD</span></a>
+  <a href="../index.html#topics">选题清单 <span>TOPIC</span></a>
+  <div class="drawer__foot">A—03 · 校园数据可视化展示</div>
+</div>
+
+<main>
+<section class="thead">
+  <div class="wrap">
+    <nav class="crumb"><a href="../index.html">首页</a><i>/</i><a href="../index.html#major-app">计算机应用技术</a><i>/</i><span>A—03</span></nav>
+    <div class="thead__row">
+      <div>
+        <p class="thead__no"><i></i>A—03 · 数据可视化</p>
+        <h1 class="h1">校园数据<br>可视化展示</h1>
+        <p class="lede thead__sub">把招生、教学、就业、空间四类数据放到同一块屏上。不是把表格变好看，而是替看数据的人回答：“这所学校现在怎么样？”</p>
+        <div class="thead__tags">
+          <span class="tag tag--accent">数据叙事</span>
+          <span class="tag">纯 SVG 图表</span>
+          <span class="tag">响应式看板</span>
+          <span class="tag">信息层级</span>
+        </div>
+      </div>
+      <div class="thead__side">
+        <span class="k">成果形式</span>
+        <span class="v">网站 / 动态</span>
+        <span class="k">建议工作量</span>
+        <span class="v">6—8 周</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<article class="demo">
+  <div class="wrap">
+    <div class="demo__bar">
+      <span class="lbl">DEMO · 作品主体</span>
+      <span class="hint">点击上方标签切换数据视角，条形与数值会随之变化</span>
+    </div>
+
+    <div class="d-viz">
+      <div class="v-top">
+        <div class="v-top__l">
+          <h2>校园数字形象全景</h2>
+          <span>DATA BOARD / 2026</span>
+        </div>
+        <div class="v-tabs" role="tablist">
+          <button class="is-on" data-view="0" role="tab">招生</button>
+          <button data-view="1" role="tab">教学</button>
+          <button data-view="2" role="tab">就业</button>
+        </div>
+      </div>
+
+      <div class="v-kpis">
+        <div class="v-kpi"><em>在校生规模</em><b>3,842</b><u>较上年 +4.6%</u></div>
+        <div class="v-kpi"><em>专业方向</em><b>12</b><u>覆盖 3 个专业群</u></div>
+        <div class="v-kpi"><em>合作企业</em><b>46</b><u>新增 7 家</u></div>
+        <div class="v-kpi"><em>对口就业率</em><b>96.4<i>%</i></b><u>高于省均 5.2 点</u></div>
+      </div>
+
+      <div class="v-grid">
+        <div class="v-cell">
+          <div class="v-ct"><h3>生源结构</h3><span>STUDENT SOURCE</span></div>
+          <div class="v-donut">
+            <svg viewBox="0 0 140 140" aria-label="生源结构环形图">
+              <circle cx="70" cy="70" r="52" stroke="var(--bg-deep)"/>
+              <g transform="rotate(-90 70 70)">
+                <circle cx="70" cy="70" r="52" stroke="#B33A2F" stroke-dasharray="150.3 326.7" stroke-dashoffset="0"/>
+                <circle cx="70" cy="70" r="52" stroke="#3F6E5E" stroke-dasharray="104.5 326.7" stroke-dashoffset="-150.3"/>
+                <circle cx="70" cy="70" r="52" stroke="#2C5578" stroke-dasharray="52.3 326.7" stroke-dashoffset="-254.8"/>
+                <circle cx="70" cy="70" r="52" stroke="#A8874F" stroke-dasharray="19.6 326.7" stroke-dashoffset="-307.1"/>
+              </g>
+            </svg>
+            <div class="v-donut__list">
+              <div><span><i style="background:#B33A2F"></i>张家港本市 <b class="n">46%</b></span><b>1,767</b></div>
+              <div><span><i style="background:#3F6E5E"></i>苏州其他区县 <b class="n">32%</b></span><b>1,229</b></div>
+              <div><span><i style="background:#2C5578"></i>江苏省内 <b class="n">16%</b></span><b>615</b></div>
+              <div><span><i style="background:#A8874F"></i>省外 <b class="n">6%</b></span><b>231</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="v-cell">
+          <div class="v-ct"><h3>专业规模</h3><span>ENROLLMENT BY MAJOR</span></div>
+          <div class="v-bars" id="bars">
+            <div class="v-bar"><div class="v-bar__t"><b>计算机应用技术</b><span data-v>92%</span></div><div class="v-bar__track"><i class="v-bar__fill" data-w="92"></i></div></div>
+            <div class="v-bar"><div class="v-bar__t"><b>计算机网络技术</b><span data-v>78%</span></div><div class="v-bar__track"><i class="v-bar__fill" data-w="78"></i></div></div>
+            <div class="v-bar"><div class="v-bar__t"><b>云计算技术应用</b><span data-v>64%</span></div><div class="v-bar__track"><i class="v-bar__fill" data-w="64"></i></div></div>
+            <div class="v-bar"><div class="v-bar__t"><b>数字媒体技术</b><span data-v>55%</span></div><div class="v-bar__track"><i class="v-bar__fill" data-w="55"></i></div></div>
+            <div class="v-bar"><div class="v-bar__t"><b>物联网应用技术</b><span data-v>41%</span></div><div class="v-bar__track"><i class="v-bar__fill" data-w="41"></i></div></div>
+          </div>
+        </div>
+
+        <div class="v-cell">
+          <div class="v-ct">
+            <h3>近五年对口就业率</h3>
+            <div class="v-legend"><span><i style="background:var(--accent)"></i>就业率</span><span><i style="background:var(--line)"></i>省平均水平</span></div>
+          </div>
+          <div class="v-line" id="line">
+            <svg viewBox="0 0 400 170" aria-label="近五年就业率折线图">
+              <defs>
+                <linearGradient id="vArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#B33A2F" stop-opacity=".22"/>
+                  <stop offset="1" stop-color="#B33A2F" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line class="grid-l" x1="20" y1="20" x2="380" y2="20"/>
+              <line class="grid-l" x1="20" y1="80" x2="380" y2="80"/>
+              <line class="grid-l" x1="20" y1="140" x2="380" y2="140"/>
+              <text class="axis-t" x="4" y="23">98</text>
+              <text class="axis-t" x="4" y="83">94</text>
+              <text class="axis-t" x="2" y="143">90</text>
+              <polyline class="stroke" points="20,116 110,98 200,86 290,80 380,74" stroke="var(--line)" stroke-dasharray="4 4" stroke-width="1.4"/>
+              <polygon class="area" points="20,108.5 110,87.5 200,68 290,56 380,44 380,140 20,140"/>
+              <polyline class="stroke" points="20,108.5 110,87.5 200,68 290,56 380,44"/>
+              <circle class="pt" cx="20" cy="108.5" r="4" data-t="2022 · 92.1%"/>
+              <circle class="pt" cx="110" cy="87.5" r="4" data-t="2023 · 93.5%"/>
+              <circle class="pt" cx="200" cy="68" r="4" data-t="2024 · 94.8%"/>
+              <circle class="pt" cx="290" cy="56" r="4" data-t="2025 · 95.6%"/>
+              <circle class="pt" cx="380" cy="44" r="4" data-t="2026 · 96.4%"/>
+              <text class="axis-t" x="14" y="160">2022</text>
+              <text class="axis-t" x="104" y="160">2023</text>
+              <text class="axis-t" x="194" y="160">2024</text>
+              <text class="axis-t" x="284" y="160">2025</text>
+              <text class="axis-t" x="374" y="160">2026</text>
+            </svg>
+            <div class="v-tip" id="tip"></div>
+          </div>
+        </div>
+
+        <div class="v-cell">
+          <div class="v-ct"><h3>实训空间使用热力</h3><span>UTILIZATION / MON—SUN</span></div>
+          <div class="v-heat" id="heat">
+            <div class="v-heat__y" id="heatY"></div>
+            <div class="v-heat__main">
+              <div class="v-heat__grid" id="heatGrid"></div>
+              <div class="v-heat__x" id="heatX"></div>
+            </div>
+          </div>
+          <div class="v-heat__foot">
+            <span>颜色越深表示该时段实训室占用率越高</span>
+            <span class="v-scale"><span>低</span><i style="background:rgba(179,58,47,.12)"></i><i style="background:rgba(179,58,47,.3)"></i><i style="background:rgba(179,58,47,.5)"></i><i style="background:rgba(179,58,47,.72)"></i><i style="background:rgba(179,58,47,.94)"></i><span>高</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<section class="spec">
+  <div class="wrap spec__grid">
+    <aside class="spec__aside">
+      <p class="eyebrow">设计说明</p>
+      <h2 class="h2" style="margin-top:.9rem">让数字有先后</h2>
+      <ul class="spec__facts">
+        <li><span>对应选题</span><b>校园数据可视化展示</b></li>
+        <li><span>成果形式</span><b>网站 / 动态看板</b></li>
+        <li><span>核心技术</span><b>HTML · CSS · 原生 JS · SVG</b></li>
+        <li><span>图表类型</span><b>环形 / 条形 / 折线 / 热力</b></li>
+        <li><span>适配</span><b>大屏 / 电脑 / 手机</b></li>
+        <li><span>发布方式</span><b>GitHub Pages</b></li>
+      </ul>
+    </aside>
+    <div class="spec__body">
+      <div class="spec__item reveal">
+        <h3><em>01</em>选题背景</h3>
+        <p>学校每年要向上级、向家长、向企业说明“办学情况”，但材料长期以表格和 Word 为主：数据是真的，读起来是累的。本选题把分散在教务、招生、就业三处的数据整理成一块看板，用一套统一的视觉语言回答四个问题——学生从哪来、学得怎么样、去了哪里、空间用得如何。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>02</em>设计思路</h3>
+        <p>结构上采用“总—分”：顶部四个 KPI 给出结论，下方四块图表给出证据。图表选择遵循“关系决定形式”：构成用环形，比较用条形，趋势用折线，分布用热力。</p>
+        <ul>
+          <li>一屏之内只讲一件事，避免十条曲线互相打架。</li>
+          <li>数值优先于图形：关键数字用衬线大字，图表作陪衬。</li>
+          <li>颜色不超过五个，且每个颜色在整页中含义固定。</li>
+          <li>移动端不缩小图表，而是改为单列纵向阅读。</li>
+        </ul>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>03</em>「五心」主题体现</h3>
+        <p><b>红心</b>：数据口径优先选用“服务地方”的指标（本地生源、本地就业），让看板与区域产业同频。<b>仁心</b>：所有图表配一句人话解释，不默认读者懂“对口就业率”的定义。<b>恒心</b>：五个专业的数据一条条核对三遍，宁可少画一张图也不写错一个数。<b>匠心</b>：网格线、刻度、图例的间距统一取 4 的倍数，视线停在哪儿都不会跳。<b>创心</b>：全部图表用手写 SVG 绘制，不依赖任何图表库。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>04</em>技术实现</h3>
+        <p>环形图用 stroke-dasharray 分段；折线用 viewBox 坐标手算点位；热力图用 CSS Grid 生成 7×10 色块，由 JS 计算占用率并写入透明度。</p>
+        <div class="chips">
+          <span>SVG stroke-dasharray 环形</span>
+          <span>viewBox 等比缩放</span>
+          <span>CSS Grid 热力网格</span>
+          <span>CSS 变量驱动主题色</span>
+          <span>data 属性渲染 KPI</span>
+          <span>无图表库依赖</span>
+        </div>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>05</em>可拓展方向</h3>
+        <ul>
+          <li>接入真实数据接口（如教务系统导出 CSV），做定时刷新。</li>
+          <li>增加“对比模式”，可同时查看两个年度的同一指标。</li>
+          <li>输出为可投屏的全屏模式，用于校园开放日展示。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pager">
+  <div class="wrap pager__in">
+    <a href="t2.html" class="prev">
+      <span class="k">← 上一个模板</span>
+      <span class="t">A—02 学校门户网站与系部网页设计</span>
+    </a>
+    <a href="../net/t1.html" class="next">
+      <span class="k">下一个模板 →</span>
+      <span class="t">N—01 学校门户网站设计与实现（含后台管理）</span>
+    </a>
+  </div>
+</nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__bar">
+      <span>© <span data-year>2026</span> 信息工程系 · 毕业设计教学参考</span>
+      <span class="mono">A—03 · DATA BOARD</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/base.js"></script>
+<script>
+(function(){
+  /* 条形入场 */
+  var bars = document.querySelectorAll('.v-bar__fill');
+  function paint(){
+    bars.forEach(function(el){ el.style.width = el.dataset.w + '%'; });
+  }
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ paint(); io.disconnect(); } });
+    },{threshold:.25});
+    io.observe(document.querySelector('.v-bars'));
+  } else { paint(); }
+
+  /* 折线悬停提示 */
+  var tip = document.getElementById('tip'), wrap = document.getElementById('line');
+  wrap.querySelectorAll('.pt').forEach(function(pt){
+    pt.addEventListener('mouseenter', function(){
+      var box = pt.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+      tip.textContent = pt.dataset.t;
+      tip.style.left = (box.left - wr.left + box.width/2) + 'px';
+      tip.style.top  = (box.top - wr.top) + 'px';
+      tip.style.opacity = 1;
+    });
+    pt.addEventListener('mouseleave', function(){ tip.style.opacity = 0; });
+  });
+
+  /* 热力图 */
+  var days = ['一','二','三','四','五','六','日'];
+  var hours = ['8:00','9:40','10:20','12:00','13:30','15:10','16:00','17:40','19:00','20:40'];
+  var y = document.getElementById('heatY'), g = document.getElementById('heatGrid'), x = document.getElementById('heatX');
+  hours.forEach(function(h){
+    var s = document.createElement('span'); s.textContent = h; y.appendChild(s);
+  });
+  days.forEach(function(d, di){
+    var xs = document.createElement('span'); xs.textContent = d; x.appendChild(xs);
+  });
+  hours.forEach(function(h, hi){
+    var row = document.createElement('div'); row.className = 'v-heat__row';
+    days.forEach(function(d, di){
+      /* 确定性的伪随机：工作日白天高、周末低、晚间次之 */
+      var base = (hi < 4 ? .82 : hi < 7 ? .5 : .3);
+      var wk = di > 4 ? .28 : 1;
+      var v = Math.min(1, base * wk + ((Math.sin(di * 3.1 + hi * 1.7) + 1) / 2) * .18);
+      var i = document.createElement('i');
+      i.style.background = 'rgba(179,58,47,' + (0.1 + v * 0.85).toFixed(2) + ')';
+      i.title = '周' + d + ' ' + h + ' · 占用 ' + Math.round(v * 100) + '%';
+      row.appendChild(i);
+    });
+    g.appendChild(row);
+  });
+
+  /* 视角切换 */
+  var sets = [
+    { kpi:['3,842','12','46','96.4'], w:[92,78,64,55,41] },
+    { kpi:['268','184','1,096','92.8'], w:[76,88,52,69,60] },
+    { kpi:['96.4','46','1,271','4.2'], w:[88,71,82,49,63] }
+  ];
+  var kpis = document.querySelectorAll('.v-kpi b');
+  var vals = document.querySelectorAll('.v-bar__t [data-v]');
+  var btns = document.querySelectorAll('.v-tabs button');
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      btns.forEach(function(x){ x.classList.remove('is-on'); });
+      b.classList.add('is-on');
+      var s = sets[+b.dataset.view];
+      kpis.forEach(function(el, i){
+        el.innerHTML = s.kpi[i] + (i === 3 ? '<i>%</i>' : '');
+      });
+      vals.forEach(function(el, i){
+        el.textContent = s.w[i] + '%';
+        bars[i].dataset.w = s.w[i];
+        bars[i].style.width = s.w[i] + '%';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

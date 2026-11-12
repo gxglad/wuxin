@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C—02 校园云服务与资源管理演示系统 · 数字形象模板库</title>
+<meta name="description" content="毕业设计模板 C—02：把校园云平台的实例、存储与费用做成一套能点的控制台。">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/template.css">
+<style>
+.d-cs{--cs-ink:#17222A;--cs-paper:#F6F5F0;--cs-line:#DCD8CB;--cs-jade:#3F6E5E;--cs-red:#B33A2F;--cs-gold:#A8874F;
+  background:var(--cs-paper);color:var(--cs-ink);font-family:var(--sans);display:grid;grid-template-columns:186px 1fr}
+.d-cs *{box-sizing:border-box}
+
+/* 侧栏 */
+.cs-side{background:#EDEAE1;border-right:1px solid var(--cs-line);padding:1.2rem .9rem;display:flex;flex-direction:column;gap:.2rem}
+.cs-side .brand2{display:flex;align-items:center;gap:.5rem;padding:0 .4rem 1rem}
+.cs-side .brand2 b{font-family:var(--serif);font-size:.86rem;letter-spacing:.04em}
+.cs-side .brand2 span{display:block;font-family:var(--mono);font-size:.5rem;letter-spacing:.14em;color:#8A8272}
+.cs-side a{
+  display:flex;align-items:center;gap:.55rem;padding:.48rem .55rem;border-radius:3px;
+  font-size:.74rem;color:#5C574B;text-decoration:none;transition:.2s;
+}
+.cs-side a svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5;flex:none;opacity:.75}
+.cs-side a:hover{background:#E4E0D4}
+.cs-side a.is-on{background:var(--cs-ink);color:#F6F5F0}
+.cs-side a.is-on svg{opacity:1}
+.cs-side .sep{margin:.8rem .2rem;border-top:1px solid var(--cs-line)}
+.cs-side .tip{font-size:.6rem;color:#8A8272;line-height:1.8;padding:.4rem .5rem;margin-top:auto}
+
+/* 主区 */
+.cs-main{min-width:0}
+.cs-top{display:flex;align-items:center;gap:.8rem;padding:.85rem 1.2rem;border-bottom:1px solid var(--cs-line);flex-wrap:wrap}
+.cs-top h3{font-family:var(--serif);font-size:.95rem;font-weight:600}
+.cs-top .sel{font-family:var(--mono);font-size:.62rem;color:#6C6659;border:1px solid var(--cs-line);background:#fff;padding:.28rem .55rem;border-radius:2px}
+.cs-top .who{margin-left:auto;display:flex;align-items:center;gap:.5rem;font-size:.66rem;color:#6C6659}
+.cs-top .who i{width:24px;height:24px;border-radius:99px;background:var(--cs-jade);color:#fff;font-style:normal;display:grid;place-items:center;font-size:.62rem}
+
+.cs-body{padding:1.2rem}
+.cs-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--cs-line);border:1px solid var(--cs-line);border-radius:2px;overflow:hidden}
+.cs-kpi div{background:#FDFCF8;padding:.9rem 1rem}
+.cs-kpi span{font-size:.62rem;color:#8A8272;letter-spacing:.06em}
+.cs-kpi b{display:block;font-family:var(--mono);font-size:1.3rem;font-weight:500;margin-top:.3rem;letter-spacing:-.01em}
+.cs-kpi small{font-size:.6rem;color:#8A8272;margin-left:.25rem}
+
+.cs-cols{display:grid;grid-template-columns:1.55fr 1fr;gap:1rem;margin-top:1rem;align-items:start}
+
+/* 实例表 */
+.cs-card{background:#FDFCF8;border:1px solid var(--cs-line);border-radius:2px}
+.cs-card h4{font-size:.74rem;padding:.8rem 1rem;border-bottom:1px solid var(--cs-line);display:flex;align-items:center;gap:.5rem}
+.cs-card h4 em{font-style:normal;font-family:var(--mono);font-size:.6rem;color:#8A8272;margin-left:auto;letter-spacing:.08em}
+.cs-tabs{display:flex;gap:.2rem;margin-left:auto}
+.cs-tabs button{border:0;background:none;font:inherit;font-size:.64rem;color:#8A8272;padding:.2rem .5rem;cursor:pointer;border-radius:2px}
+.cs-tabs button.is-on{background:var(--cs-ink);color:#F6F5F0}
+table.cs-t{width:100%;border-collapse:collapse;font-size:.7rem}
+table.cs-t th{text-align:left;font-weight:400;font-size:.6rem;color:#8A8272;letter-spacing:.08em;padding:.55rem .8rem;border-bottom:1px solid var(--cs-line)}
+table.cs-t td{padding:.62rem .8rem;border-bottom:1px solid #E7E3D7;vertical-align:middle}
+table.cs-t tr:last-child td{border-bottom:0}
+.cs-nm{font-weight:600;letter-spacing:.01em}
+.cs-nm i{display:block;font-style:normal;font-family:var(--mono);font-size:.56rem;color:#8A8272;font-weight:400;margin-top:.15rem;letter-spacing:.06em}
+.chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;padding:.14rem .45rem;border-radius:99px}
+.chip::before{content:"";width:5px;height:5px;border-radius:99px;background:currentColor}
+.chip.run{background:rgba(63,110,94,.12);color:#2F5C4D}
+.chip.stop{background:rgba(120,116,104,.14);color:#6C6659}
+.cs-bar{width:66px;height:4px;background:#E7E3D7;border-radius:99px;overflow:hidden}
+.cs-bar i{display:block;height:100%;background:var(--cs-jade);border-radius:99px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.cs-bar.hot i{background:var(--cs-red)}
+.cs-op{border:1px solid var(--cs-line);background:#fff;font:inherit;font-size:.62rem;padding:.24rem .55rem;border-radius:2px;cursor:pointer;transition:.2s;white-space:nowrap}
+.cs-op:hover{background:var(--cs-ink);color:#F6F5F0;border-color:var(--cs-ink)}
+
+/* 右列 */
+.cs-right{display:grid;gap:1rem}
+.cs-chart{padding:.9rem 1rem 1rem}
+.cs-chart .hd{display:flex;align-items:baseline;gap:.5rem;font-size:.62rem;color:#8A8272}
+.cs-chart .hd b{margin-left:auto;font-family:var(--mono);font-size:.86rem;color:var(--cs-ink);font-weight:500}
+.cs-chart svg{width:100%;height:96px;display:block;margin-top:.5rem}
+.cs-chart .ax{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.54rem;color:#A39C8C;margin-top:.3rem}
+
+.cs-store{padding:.9rem 1rem 1.1rem;display:grid;gap:.7rem}
+.cs-store .row{display:grid;gap:.3rem}
+.cs-store .row span{display:flex;justify-content:space-between;font-size:.64rem;color:#6C6659}
+.cs-store .row b{font-family:var(--mono);font-weight:400;color:var(--cs-ink)}
+.cs-store .bar{height:6px;background:#E7E3D7;border-radius:99px;overflow:hidden}
+.cs-store .bar i{display:block;height:100%;border-radius:99px;transition:width .6s}
+
+.cs-bill{padding:.9rem 1rem 1.1rem}
+.cs-bill .num{font-family:var(--mono);font-size:1.5rem;font-weight:500;margin:.3rem 0 .2rem}
+.cs-bill .num small{font-size:.62rem;color:#8A8272;margin-left:.2rem}
+.cs-bill label{display:block;font-size:.62rem;color:#6C6659;margin-top:.7rem}
+.cs-bill input[type=range]{width:100%;accent-color:#B33A2F;margin-top:.3rem}
+.cs-bill .ln{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.56rem;color:#A39C8C}
+
+.cs-note{font-size:.62rem;color:#8A8272;line-height:1.9;padding:.7rem 1rem;border-top:1px solid var(--cs-line)}
+
+@media (max-width:1000px){
+  .d-cs{grid-template-columns:1fr}
+  .cs-side{flex-direction:row;overflow-x:auto;padding:.6rem;gap:.4rem;border-right:0;border-bottom:1px solid var(--cs-line)}
+  .cs-side .brand2,.cs-side .sep,.cs-side .tip{display:none}
+  .cs-side a{white-space:nowrap;padding:.4rem .6rem}
+  .cs-cols{grid-template-columns:1fr}
+  .cs-kpi{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .cs-body{padding:.8rem}
+  .cs-kpi{grid-template-columns:1fr 1fr}
+  .cs-kpi b{font-size:1.05rem}
+  table.cs-t th:nth-child(2),table.cs-t td:nth-child(2){display:none}
+  .cs-bar{width:44px}
+}
+</style>
+</head>
+<body class="major-cloud">
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="../index.html">
+      <span class="seal">匠</span>
+      <span class="brand__txt"><b>数字形象模板库</b><span>SUZHOU CRAFTSMANSHIP</span></span>
+    </a>
+    <nav class="nav__links" aria-label="主导航">
+      <a href="../index.html#major-app">计算机应用</a>
+      <a href="../index.html#major-net">计算机网络</a>
+      <a href="../index.html#major-cloud">云计算</a>
+      <a href="../index.html#topics">选题清单</a>
+    </nav>
+    <div class="nav__tools">
+      <button class="icon-btn theme-btn" aria-label="切换深浅色">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+      <button class="icon-btn burger" aria-label="菜单" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../index.html">返回首页 <span>HOME</span></a>
+  <a href="../index.html#major-app">计算机应用技术 <span>APP</span></a>
+  <a href="../index.html#major-net">计算机网络技术 <span>NET</span></a>
+  <a href="../index.html#major-cloud">云计算技术应用 <span>CLOUD</span></a>
+  <a href="../index.html#topics">选题清单 <span>TOPIC</span></a>
+  <div class="drawer__foot">C—02 · 云资源管理</div>
+</div>
+
+<main>
+<section class="thead">
+  <div class="wrap">
+    <nav class="crumb"><a href="../index.html">首页</a><i>/</i><a href="../index.html#major-cloud">云计算技术应用</a><i>/</i><span>C—02</span></nav>
+    <div class="thead__row">
+      <div>
+        <p class="thead__no"><i></i>C—02 · 系统</p>
+        <h1 class="h1">校园云服务<br>与资源管理演示系统</h1>
+        <p class="lede thead__sub">云计算专业最怕“只有几张架构图”。把虚拟机启停、存储配额和费用估算做成能点的控制台，答辩时当场演一遍。</p>
+        <div class="thead__tags">
+          <span class="tag tag--accent">实例启停</span>
+          <span class="tag">资源曲线</span>
+          <span class="tag">存储配额</span>
+          <span class="tag">计费估算</span>
+        </div>
+      </div>
+      <div class="thead__side">
+        <span class="k">成果形式</span>
+        <span class="v">网站 / 管理后台</span>
+        <span class="k">建议工作量</span>
+        <span class="v">7—9 周</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="demo__bar">
+    <span class="lbl">DEMO · 作品主体</span>
+    <span class="hint">点“停止”实例会真的停：CPU 归零、KPI 与费用同步变化；下方滑块可试算不同规模的开支</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="d-cs">
+
+    <aside class="cs-side">
+      <div class="brand2">
+        <span class="seal" style="width:26px;height:26px;font-size:.8rem">云</span>
+        <div><b>校园云控制台</b><span>CAMPUS CLOUD</span></div>
+      </div>
+      <a href="#d" class="is-on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>概览</a>
+      <a href="#d"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg>实例</a>
+      <a href="#d"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/></svg>存储</a>
+      <a href="#d"><svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h16"/><path d="m7 15 4-5 3 3 5-7"/></svg>监控</a>
+      <a href="#d"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 8h7a3 3 0 0 1 0 6H7"/></svg>计费</a>
+      <div class="sep"></div>
+      <a href="#d"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>设置</a>
+      <div class="tip">演示数据。所有操作只改本页内存，刷新即复原。</div>
+    </aside>
+
+    <div class="cs-main">
+      <div class="cs-top">
+        <h3>资源概览</h3>
+        <span class="sel">华东 · 张家港</span>
+        <span class="sel">2026-11-12 17:40</span>
+        <div class="who"><i>信</i>信息工程系 · 管理员</div>
+      </div>
+
+      <div class="cs-body">
+        <div class="cs-kpi">
+          <div><span>运行中实例</span><b id="k1">0<small>/ 6 台</small></b></div>
+          <div><span>平均 CPU</span><b id="k2">0<small>%</small></b></div>
+          <div><span>存储占用</span><b id="k3">0<small>TB</small></b></div>
+          <div><span>本月预估</span><b id="k4">0<small>元</small></b></div>
+        </div>
+
+        <div class="cs-cols">
+
+          <div class="cs-card">
+            <h4>实例列表<em id="flt">全部 6 台</em>
+              <div class="cs-tabs" id="tabs">
+                <button class="is-on" data-f="all">全部</button>
+                <button data-f="run">运行</button>
+                <button data-f="stop">已停</button>
+              </div>
+            </h4>
+            <div style="overflow-x:auto">
+              <table class="cs-t">
+                <thead>
+                  <tr><th>实例</th><th>规格</th><th>状态</th><th>CPU</th><th>操作</th></tr>
+                </thead>
+                <tbody id="tb"></tbody>
+              </table>
+            </div>
+            <div class="cs-note">规范：教学实例白天 8:00—21:00 保持运行，夜间自动停机；学生实训机按需启动，单次最长 4 小时。</div>
+          </div>
+
+          <div class="cs-right">
+            <div class="cs-card cs-chart">
+              <div class="hd">资源曲线
+                <div class="cs-tabs" id="mt">
+                  <button class="is-on" data-m="cpu">CPU</button>
+                  <button data-m="mem">内存</button>
+                  <button data-m="net">带宽</button>
+                </div>
+                <b id="mval">0%</b>
+              </div>
+              <svg id="spark" viewBox="0 0 300 96" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="sf" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#3F6E5E" stop-opacity=".22"/>
+                    <stop offset="1" stop-color="#3F6E5E" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g stroke="#E7E3D7" stroke-width="1">
+                  <path d="M0 24h300M0 48h300M0 72h300"/>
+                </g>
+                <path id="area" fill="url(#sf)" d=""/>
+                <polyline id="line" fill="none" stroke="#3F6E5E" stroke-width="1.6" points=""/>
+                <circle id="dot" r="2.6" fill="#3F6E5E"/>
+              </svg>
+              <div class="ax"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+            </div>
+
+            <div class="cs-card cs-store">
+              <div class="hd" style="font-size:.62rem;color:#8A8272;display:flex"><span>存储配额</span><b style="margin-left:auto;font-family:var(--mono);color:#17222A;font-weight:400">1.8 / 4.0 TB</b></div>
+              <div class="row"><span>作品素材 <b>820 GB</b></span><div class="bar"><i style="width:70%;background:#3F6E5E"></i></div></div>
+              <div class="row"><span>课程录像 <b>540 GB</b></span><div class="bar"><i style="width:52%;background:#2C5578"></i></div></div>
+              <div class="row"><span>虚拟机镜像 <b>310 GB</b></span><div class="bar"><i style="width:34%;background:#A8874F"></i></div></div>
+              <div class="row"><span>备份 <b>150 GB</b></span><div class="bar"><i style="width:18%;background:#7A4A63"></i></div></div>
+            </div>
+
+            <div class="cs-card cs-bill">
+              <div class="hd" style="font-size:.62rem;color:#8A8272">费用试算 · 按量</div>
+              <div class="num"><span id="cost">0</span><small>元 / 月</small></div>
+              <label>实例数量 <b id="ln1" style="font-family:var(--mono);font-weight:400">6 台</b>
+                <input type="range" id="r1" min="1" max="20" value="6">
+                <div class="ln"><span>1</span><span>20</span></div>
+              </label>
+              <label>每日运行 <b id="ln2" style="font-family:var(--mono);font-weight:400">13 小时</b>
+                <input type="range" id="r2" min="1" max="24" value="13">
+                <div class="ln"><span>1</span><span>24</span></div>
+              </label>
+              <div class="cs-note" style="border:0;padding:.7rem 0 0">按 0.32 元 / 台 / 小时计，不含存储与带宽。</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<section class="spec">
+  <div class="wrap spec__grid">
+    <aside class="spec__aside">
+      <p class="eyebrow">设计说明</p>
+      <h2 class="h2" style="margin-top:.9rem">把架构<br>变成手能碰的</h2>
+      <ul class="spec__facts">
+        <li><span>对应选题</span><b>校园云服务与资源管理演示系统</b></li>
+        <li><span>成果形式</span><b>网站 / 管理后台</b></li>
+        <li><span>核心技术</span><b>HTML · CSS · 原生 JS · SVG</b></li>
+        <li><span>数据模型</span><b>实例数组 + 状态派生指标</b></li>
+        <li><span>适配</span><b>电脑为主 / 手机可查</b></li>
+        <li><span>发布方式</span><b>GitHub Pages</b></li>
+      </ul>
+    </aside>
+    <div class="spec__body">
+      <div class="spec__item reveal">
+        <h3><em>01</em>选题背景</h3>
+        <p>云计算的作业最容易被做成“三张架构图加一段配置代码”。评审看不懂，学生自己也讲不清。这个题目换了个做法：把一台虚拟机从开机到停机、从占用到计费的全过程放到网页上，让不会用命令行的人也能看懂“云”到底在管什么。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>02</em>设计思路</h3>
+        <p>按真实控制台的信息层级来做，但砍掉 80% 的菜单。只留四个问题：开了几台、跑得怎么样、占了多少、要花多少钱。</p>
+        <ul>
+          <li>指标一律从实例数组现算，不做硬编码，改一台就全身联动。</li>
+          <li>启停不弹窗、不跳页，就地改状态，一秒内看到结果。</li>
+          <li>配色克制：只有“运行绿、告警红、存储四色”三组颜色。</li>
+          <li>手机上表格收起次要列，保留实例名、状态和操作。</li>
+        </ul>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>03</em>「五心」主题体现</h3>
+        <p><b>红心</b>：演示数据全部用学校真实场景命名——作品素材、课程录像、虚拟机镜像。<b>仁心</b>：每个指标后都有一句人话解释，不假设读者懂 vCPU 与 IOPS。<b>恒心</b>：六个实例的 CPU 曲线一条条调过，让白天的峰值和夜间的空档对得上。<b>匠心</b>：表格列宽、数字右对齐、状态点直径全部对齐 4 像素栅格。<b>创心</b>：纯 SVG 画曲线，不引任何图表库，单文件在答辩机房里也能直接打开。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>04</em>技术实现</h3>
+        <p>状态存一个数组，每次操作只改一个字段，然后统一走一次 render()：表格、KPI、曲线、费用全部重算。曲线用折线点坐标拼 polyline，面积用同一条线闭合填充。</p>
+        <div class="chips">
+          <span>状态机（run / stop）</span>
+          <span>派生指标计算</span>
+          <span>SVG polyline 折线</span>
+          <span>range 滑块联动</span>
+          <span>CSS Grid 控制台布局</span>
+          <span>表格响应式收列</span>
+        </div>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>05</em>可拓展方向</h3>
+        <ul>
+          <li>接真实 OpenStack 或云厂商 API，把演示数据换成实时数据。</li>
+          <li>加登录与角色（学生只能启停自己的机器）。</li>
+          <li>导出月度账单为 CSV，交给学校财务走报销流程。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pager">
+  <div class="wrap pager__in">
+    <a href="t1.html" class="prev">
+      <span class="k">← 上一个模板</span>
+      <span class="t">C—01 校园数字形象云平台与作品展示站</span>
+    </a>
+    <a href="../index.html#topics" class="next">
+      <span class="k">回到选题清单 →</span>
+      <span class="t">七个可做选题与已排除方向</span>
+    </a>
+  </div>
+</nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__bar">
+      <span>© <span data-year>2026</span> 信息工程系 · 毕业设计教学参考</span>
+      <span class="mono">C—02 · CLOUD CONSOLE</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/base.js"></script>
+<script>
+(function(){
+  var inst = [
+    {name:'web-portal-01', id:'i-7a21c9', spec:'2 核 4G', cpu:38, mem:52, net:120, st:'run'},
+    {name:'web-portal-02', id:'i-7a21ca', spec:'2 核 4G', cpu:31, mem:48, net:96,  st:'run'},
+    {name:'works-gallery', id:'i-3f8b12', spec:'4 核 8G', cpu:64, mem:71, net:210, st:'run'},
+    {name:'lab-vm-08',     id:'i-9c03de', spec:'8 核 16G', cpu:0,  mem:0,  net:0,   st:'stop'},
+    {name:'lab-vm-09',     id:'i-9c03df', spec:'8 核 16G', cpu:12, mem:26, net:18,  st:'run'},
+    {name:'db-backup',     id:'i-5e77aa', spec:'2 核 4G', cpu:0,  mem:0,  net:0,   st:'stop'}
+  ];
+  var filter = 'all', metric = 'cpu';
+  var tb = document.getElementById('tb');
+  var spark = { cpu:[8,6,5,5,7,14,32,48,56,61,58,54,49,63,66,58,44,30,22,18,14,11,9,8],
+                mem:[41,40,40,39,42,46,55,62,66,69,71,70,68,72,74,71,66,61,56,52,48,45,43,42],
+                net:[6,4,3,3,5,18,52,88,96,104,98,92,86,110,118,96,72,48,32,24,18,12,9,7] };
+
+  function running(){ return inst.filter(function(i){ return i.st === 'run'; }); }
+  function avg(k){
+    var r = running();
+    if(!r.length) return 0;
+    return Math.round(r.reduce(function(a,b){ return a + b[k]; },0) / r.length);
+  }
+
+  function render(){
+    var k = 0;
+    tb.innerHTML = '';
+    inst.forEach(function(it, i){
+      if(filter !== 'all' && it.st !== filter) return;
+      var tr = document.createElement('tr');
+      var live = it.st === 'run' ? it.cpu : 0;
+      var hot = live >= 60;
+      tr.innerHTML =
+        '<td><span class="cs-nm">' + it.name + '<i>' + it.id + '</i></span></td>' +
+        '<td style="font-family:var(--mono);font-size:.64rem;color:#6C6659">' + it.spec + '</td>' +
+        '<td><span class="chip ' + (it.st === 'run' ? 'run">运行中' : 'stop">已停止') + '</span></td>' +
+        '<td><div style="display:flex;align-items:center;gap:.4rem">' +
+          '<div class="cs-bar' + (hot ? ' hot' : '') + '"><i style="width:' + live + '%"></i></div>' +
+          '<span style="font-family:var(--mono);font-size:.6rem;color:#6C6659;width:26px">' + live + '%</span>' +
+        '</div></td>' +
+        '<td><button class="cs-op" data-i="' + i + '">' + (it.st === 'run' ? '停止' : '启动') + '</button></td>';
+      tb.appendChild(tr);
+      k++;
+    });
+    document.getElementById('flt').textContent = (filter === 'all' ? '全部 ' : (filter === 'run' ? '运行 ' : '已停 ')) + k + ' 台';
+
+    document.getElementById('k1').innerHTML = running().length + '<small>/ ' + inst.length + ' 台</small>';
+    document.getElementById('k2').innerHTML = avg('cpu') + '<small>%</small>';
+    document.getElementById('k3').innerHTML = '1.8<small>TB</small>';
+    document.getElementById('k4').innerHTML = cost() + '<small>元</small>';
+
+    tb.querySelectorAll('.cs-op').forEach(function(b){
+      b.addEventListener('click', function(){
+        var it = inst[+b.dataset.i];
+        it.st = it.st === 'run' ? 'stop' : 'run';
+        render();
+      });
+    });
+
+    draw();
+  }
+
+  function draw(){
+    var d = spark[metric].slice();
+    /* 停机越多，曲线整体压低，让操作看得出后果 */
+    var ratio = running().length / inst.length;
+    if(ratio < 1){
+      d = d.map(function(v){ return Math.round(v * (0.35 + 0.65 * ratio)); });
+    }
+    var max = metric === 'net' ? 140 : 100, W = 300, H = 96;
+    var pts = d.map(function(v, i){
+      return (i / (d.length - 1) * W).toFixed(1) + ',' + (H - v / max * H).toFixed(1);
+    });
+    document.getElementById('line').setAttribute('points', pts.join(' '));
+    document.getElementById('area').setAttribute('d', 'M0,' + H + ' L' + pts.join(' L') + ' L' + W + ',' + H + ' Z');
+    var last = d[d.length - 1];
+    document.getElementById('dot').setAttribute('cx', W);
+    document.getElementById('dot').setAttribute('cy', H - last / max * H);
+    var unit = metric === 'net' ? 'Mb/s' : '%';
+    document.getElementById('mval').textContent = last + unit;
+  }
+
+  function cost(){
+    var n = +document.getElementById('r1').value;
+    var h = +document.getElementById('r2').value;
+    return Math.round(n * h * 30 * 0.32);
+  }
+  function bill(){
+    document.getElementById('cost').textContent = cost();
+    document.getElementById('ln1').textContent = document.getElementById('r1').value + ' 台';
+    document.getElementById('ln2').textContent = document.getElementById('r2').value + ' 小时';
+    document.getElementById('k4').innerHTML = cost() + '<small>元</small>';
+  }
+
+  document.getElementById('r1').addEventListener('input', bill);
+  document.getElementById('r2').addEventListener('input', bill);
+
+  document.getElementById('tabs').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    filter = b.dataset.f;
+    this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('is-on', x === b); });
+    render();
+  });
+  document.getElementById('mt').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    metric = b.dataset.m;
+    this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('is-on', x === b); });
+    draw();
+  });
+
+  render();
+  bill();
+})();
+</script>
+</body>
+</html>

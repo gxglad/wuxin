@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>N—01 学校门户网站设计与实现（含后台管理） · 数字形象模板库</title>
+<meta name="description" content="计算机网络技术 N—01 模板：门户网站 + 内容后台管理系统，含登录、内容发布、栏目管理、媒体库与发布日志。">
+<meta name="theme-color" content="#F5F2EB">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/template.css">
+<style>
+/* ===== N—01 专属：门户 + 后台 ===== */
+.d-cms{
+  background:var(--bg-elev);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.c-bar{
+  display:flex;align-items:center;gap:.6rem;padding:.6rem clamp(.8rem,2vw,1.2rem);
+  border-bottom:1px solid var(--line-soft);background:var(--bg-deep);flex-wrap:wrap;
+}
+.c-bar__t{font-family:var(--mono);font-size:.56rem;letter-spacing:.18em;color:var(--fg-3);margin-right:auto}
+.c-seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.15rem}
+.c-seg button{font:inherit;font-size:.72rem;padding:.32rem .9rem;border-radius:999px;color:var(--fg-2);transition:background .3s,color .3s}
+.c-seg button.is-on{background:var(--fg);color:var(--bg)}
+
+.c-view{display:none}
+.c-view.is-on{display:block}
+
+/* 前台预览 */
+.c-front{padding:clamp(1rem,2.6vw,1.8rem);background:var(--bg)}
+.c-front__hd{display:flex;justify-content:space-between;align-items:center;gap:1rem;border-bottom:1px solid var(--line);padding-bottom:.9rem;margin-bottom:1.2rem}
+.c-front__logo{display:flex;align-items:center;gap:.6rem}
+.c-front__logo i{width:30px;height:30px;border-radius:7px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:var(--serif);font-size:.9rem;font-style:normal}
+.c-front__logo b{font-family:var(--serif);font-size:.95rem}
+.c-front__nav{display:flex;gap:1.1rem;font-size:.76rem;color:var(--fg-3)}
+.c-front__hero{
+  border-radius:var(--r);padding:clamp(1.2rem,3vw,2rem);color:#F3EDE1;margin-bottom:1.2rem;
+  background:linear-gradient(140deg,#22343C,#16232A);position:relative;overflow:hidden;
+}
+.c-front__hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 85% 20%,rgba(198,75,57,.35),transparent 60%)}
+.c-front__hero h3{font-family:var(--serif);font-size:clamp(1.1rem,2.2vw,1.5rem);font-weight:600;line-height:1.5;position:relative;z-index:2}
+.c-front__hero p{font-size:.76rem;color:rgba(243,237,225,.7);margin-top:.5rem;position:relative;z-index:2}
+.c-front__list{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.c-front__card{border:1px solid var(--line-soft);border-radius:var(--r);padding:.9rem;background:var(--bg-elev)}
+.c-front__card span{font-family:var(--mono);font-size:.58rem;color:var(--accent);letter-spacing:.1em}
+.c-front__card h4{font-size:.82rem;margin:.4rem 0 .3rem;line-height:1.6}
+.c-front__card p{font-size:.7rem;color:var(--fg-3);line-height:1.7}
+.c-front__note{margin-top:1.1rem;font-size:.66rem;color:var(--fg-3);display:flex;align-items:center;gap:.4rem}
+.c-front__note::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--jade);flex:none}
+
+/* 登录 */
+.c-login{display:grid;place-items:center;padding:clamp(2rem,6vw,4rem) 1rem;background:
+  radial-gradient(ellipse at 50% 0%,var(--bg-deep),var(--bg) 70%)}
+.c-login__box{width:min(100%,340px);border:1px solid var(--line);border-radius:var(--r-lg);background:var(--bg-elev);padding:1.6rem;box-shadow:var(--shadow)}
+.c-login__box h3{font-family:var(--serif);font-size:1.1rem;text-align:center}
+.c-login__box p{font-size:.68rem;color:var(--fg-3);text-align:center;margin:.4rem 0 1.4rem}
+.c-field{margin-bottom:.8rem}
+.c-field label{display:block;font-size:.66rem;color:var(--fg-3);margin-bottom:.3rem;letter-spacing:.04em}
+.c-field input{width:100%;font:inherit;font-size:.8rem;padding:.55rem .7rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);outline:none;transition:border-color .25s}
+.c-field input:focus{border-color:var(--accent)}
+.c-login__tip{font-size:.62rem;color:var(--fg-3);text-align:center;margin-top:.9rem;font-family:var(--mono)}
+
+/* 后台 */
+.c-app{display:grid;grid-template-columns:186px 1fr;min-height:520px;background:var(--bg)}
+.c-side{background:#151E24;color:#C9CFD3;padding:1rem .7rem;display:flex;flex-direction:column;gap:.2rem}
+.c-side__logo{display:flex;align-items:center;gap:.5rem;padding:.4rem .5rem 1rem;color:#F3EDE1}
+.c-side__logo i{width:24px;height:24px;border-radius:6px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:var(--serif);font-size:.8rem;font-style:normal}
+.c-side__logo b{font-size:.78rem;font-weight:600;letter-spacing:.04em}
+.c-side a{
+  display:flex;align-items:center;gap:.55rem;padding:.55rem .6rem;border-radius:7px;
+  font-size:.76rem;color:#9AA6AC;transition:background .25s,color .25s;cursor:pointer;
+}
+.c-side a svg{width:14px;height:14px;flex:none;opacity:.85}
+.c-side a:hover{background:rgba(255,255,255,.06);color:#E7EBED}
+.c-side a.is-on{background:rgba(179,58,47,.22);color:#F3EDE1}
+.c-side__foot{margin-top:auto;font-size:.6rem;color:#6E7A80;padding:.6rem .5rem 0;border-top:1px solid rgba(255,255,255,.07)}
+
+.c-main{display:flex;flex-direction:column;min-width:0}
+.c-top{
+  display:flex;align-items:center;gap:.8rem;padding:.7rem clamp(.8rem,2vw,1.2rem);
+  border-bottom:1px solid var(--line-soft);background:var(--bg-elev);
+}
+.c-top__crumb{font-size:.72rem;color:var(--fg-3)}
+.c-top__crumb b{color:var(--fg);font-weight:600}
+.c-top__user{margin-left:auto;display:flex;align-items:center;gap:.45rem;font-size:.72rem;color:var(--fg-2)}
+.c-top__user i{width:24px;height:24px;border-radius:50%;background:var(--bg-deep);display:grid;place-items:center;font-size:.6rem;font-style:normal;color:var(--fg-2)}
+
+.c-body{padding:clamp(.9rem,2.2vw,1.3rem);display:flex;flex-direction:column;gap:.9rem;overflow:hidden}
+.c-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+.c-stat{border:1px solid var(--line-soft);border-radius:var(--r);padding:.7rem .8rem;background:var(--bg-elev)}
+.c-stat em{font-style:normal;font-size:.62rem;color:var(--fg-3)}
+.c-stat b{display:block;font-family:var(--serif);font-size:1.2rem;margin-top:.2rem}
+.c-stat u{text-decoration:none;font-size:.58rem;color:var(--jade)}
+
+.c-toolbar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.c-btn{
+  font:inherit;font-size:.72rem;padding:.42rem .8rem;border-radius:7px;border:1px solid var(--line);
+  background:var(--bg-elev);color:var(--fg-2);transition:.25s;white-space:nowrap;
+}
+.c-btn:hover{border-color:var(--fg-3);color:var(--fg)}
+.c-btn--pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.c-btn--pri:hover{background:#9C3128;border-color:#9C3128;color:#fff}
+.c-btn--sm{padding:.24rem .55rem;font-size:.66rem;border-radius:5px}
+.c-toolbar .sp{margin-left:auto;font-size:.66rem;color:var(--fg-3)}
+
+.c-tablewrap{border:1px solid var(--line-soft);border-radius:var(--r);overflow:auto;background:var(--bg-elev)}
+table.c-tb{width:100%;border-collapse:collapse;min-width:560px}
+.c-tb th{
+  text-align:left;font-size:.62rem;font-weight:500;color:var(--fg-3);letter-spacing:.08em;
+  padding:.6rem .7rem;border-bottom:1px solid var(--line);background:var(--bg);white-space:nowrap;
+}
+.c-tb td{padding:.62rem .7rem;border-bottom:1px solid var(--line-soft);font-size:.74rem;vertical-align:middle}
+.c-tb tr:last-child td{border-bottom:0}
+.c-tb tr:hover td{background:var(--accent-soft)}
+.c-tb .t{font-weight:600;color:var(--fg);line-height:1.5}
+.c-tb .cat{font-size:.66rem;color:var(--fg-3)}
+.c-tb .tm{font-family:var(--mono);font-size:.62rem;color:var(--fg-3);white-space:nowrap}
+.c-tb .op{white-space:nowrap;display:flex;gap:.3rem}
+.chip{display:inline-flex;align-items:center;gap:.25rem;font-size:.6rem;padding:.13rem .42rem;border-radius:999px;white-space:nowrap}
+.chip::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor}
+.chip--pub{background:rgba(63,110,94,.12);color:#3F6E5E}
+.chip--draft{background:rgba(168,135,79,.14);color:#8A6C3A}
+.chip--wait{background:rgba(179,58,47,.1);color:#B33A2F}
+
+/* 弹窗 */
+.c-modal{position:absolute;inset:0;background:rgba(16,22,26,.5);display:none;place-items:center;padding:1rem;z-index:20}
+.c-modal.is-on{display:grid}
+.c-modal__box{width:min(100%,420px);background:var(--bg-elev);border-radius:var(--r-lg);padding:1.2rem;border:1px solid var(--line)}
+.c-modal__box h3{font-family:var(--serif);font-size:1rem;margin-bottom:1rem}
+.c-modal__box textarea{
+  width:100%;font:inherit;font-size:.78rem;padding:.55rem .7rem;border:1px solid var(--line);
+  border-radius:8px;background:var(--bg);color:var(--fg);outline:none;resize:vertical;min-height:70px;
+}
+.c-modal__box textarea:focus{border-color:var(--accent)}
+.c-modal__foot{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem}
+.c-stage{position:relative}
+
+/* toast */
+.c-toast{
+  position:absolute;left:50%;bottom:1.2rem;transform:translate(-50%,14px);
+  background:var(--fg);color:var(--bg);font-size:.72rem;padding:.5rem .9rem;border-radius:999px;
+  opacity:0;pointer-events:none;transition:.35s var(--ease);z-index:30;white-space:nowrap;
+}
+.c-toast.is-on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:820px){
+  .c-app{grid-template-columns:1fr}
+  .c-side{flex-direction:row;overflow-x:auto;padding:.6rem;gap:.3rem;align-items:center}
+  .c-side__logo,.c-side__foot{display:none}
+  .c-side a{white-space:nowrap;padding:.4rem .6rem}
+  .c-stats{grid-template-columns:1fr 1fr}
+  .c-front__list{grid-template-columns:1fr}
+  .c-front__nav{display:none}
+  .c-side a span{display:none}
+  .c-side a{padding:.5rem}
+}
+</style>
+</head>
+<body class="major-net">
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="../index.html">
+      <span class="seal">匠</span>
+      <span class="brand__txt"><b>数字形象模板库</b><span>SUZHOU CRAFTSMANSHIP</span></span>
+    </a>
+    <nav class="nav__links" aria-label="主导航">
+      <a href="../index.html#major-app">计算机应用</a>
+      <a href="../index.html#major-net">计算机网络</a>
+      <a href="../index.html#major-cloud">云计算</a>
+      <a href="../index.html#topics">选题清单</a>
+    </nav>
+    <div class="nav__tools">
+      <button class="icon-btn theme-btn" aria-label="切换深浅色">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+      <button class="icon-btn burger" aria-label="菜单" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../index.html">返回首页 <span>HOME</span></a>
+  <a href="../index.html#major-app">计算机应用技术 <span>APP</span></a>
+  <a href="../index.html#major-net">计算机网络技术 <span>NET</span></a>
+  <a href="../index.html#major-cloud">云计算技术应用 <span>CLOUD</span></a>
+  <a href="../index.html#topics">选题清单 <span>TOPIC</span></a>
+  <div class="drawer__foot">N—01 · 门户 + 后台管理</div>
+</div>
+
+<main>
+<section class="thead">
+  <div class="wrap">
+    <nav class="crumb"><a href="../index.html">首页</a><i>/</i><a href="../index.html#major-net">计算机网络技术</a><i>/</i><span>N—01</span></nav>
+    <div class="thead__row">
+      <div>
+        <p class="thead__no"><i></i>N—01 · 网站 + 后台</p>
+        <h1 class="h1">学校门户网站<br>设计与实现</h1>
+        <p class="lede thead__sub">前台是给访客看的，后台是给老师用的。这个选题的难点不在页面，而在"内容如何被安全、可控地发布出去"。</p>
+        <div class="thead__tags">
+          <span class="tag tag--accent">含后台管理</span>
+          <span class="tag">权限与角色</span>
+          <span class="tag">内容发布流程</span>
+          <span class="tag">前后台分离</span>
+        </div>
+      </div>
+      <div class="thead__side">
+        <span class="k">成果形式</span>
+        <span class="v">网站 + 管理系统</span>
+        <span class="k">建议工作量</span>
+        <span class="v">8—10 周</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<article class="demo">
+  <div class="wrap">
+    <div class="demo__bar">
+      <span class="lbl">DEMO · 作品主体</span>
+      <span class="hint">可切换「前台预览 / 后台管理」，后台默认账号已填好，直接点登录</span>
+    </div>
+
+    <div class="d-cms">
+      <div class="c-bar">
+        <span class="c-bar__t">CAMPUS CMS / DEMO</span>
+        <div class="c-seg" role="tablist">
+          <button class="is-on" data-view="front" role="tab">前台预览</button>
+          <button data-view="admin" role="tab">后台管理</button>
+        </div>
+      </div>
+
+      <div class="c-stage">
+        <!-- 前台 -->
+        <div class="c-view is-on" id="viewFront">
+          <div class="c-front">
+            <div class="c-front__hd">
+              <div class="c-front__logo"><i>信</i><b>信息工程系</b></div>
+              <div class="c-front__nav"><span>系部概况</span><span>新闻动态</span><span>专业设置</span><span>招生就业</span></div>
+            </div>
+            <div class="c-front__hero">
+              <h3>四十七件作品，讲一所学校的样子</h3>
+              <p>2022 级毕业设计展在实训楼三层开展，展期两周。</p>
+            </div>
+            <div class="c-front__list" id="frontList">
+              <div class="c-front__card"><span>通知公告</span><h4>关于毕业设计答辩安排的通知</h4><p>请各专业于 11 月 20 日前提交答辩分组名单。</p></div>
+              <div class="c-front__card"><span>教学动态</span><h4>实训室预约系统上线试运行</h4><p>支持机房、设备、工位三类资源的在线预约。</p></div>
+              <div class="c-front__card"><span>校企合作</span><h4>与本地云服务企业共建课程</h4><p>企业工程师走进课堂，把真实工单拆成教学任务。</p></div>
+            </div>
+            <p class="c-front__note">以上三条内容来自后台"已发布"列表，修改状态后前台同步变化。</p>
+          </div>
+        </div>
+
+        <!-- 后台 -->
+        <div class="c-view" id="viewAdmin">
+          <div class="c-login" id="loginPanel">
+            <form class="c-login__box" id="loginForm">
+              <h3>内容管理后台</h3>
+              <p>信息工程系 · 站点管理</p>
+              <div class="c-field"><label for="u">账号</label><input id="u" value="admin" autocomplete="username"></div>
+              <div class="c-field"><label for="p">密码</label><input id="p" type="password" value="demo123" autocomplete="current-password"></div>
+              <button class="c-btn c-btn--pri" type="submit" style="width:100%;padding:.6rem;margin-top:.4rem">登 录</button>
+              <p class="c-login__tip">演示账号 admin / demo123</p>
+            </form>
+          </div>
+
+          <div class="c-app" id="adminApp" hidden>
+            <aside class="c-side">
+              <div class="c-side__logo"><i>信</i><b>信息工程系 CMS</b></div>
+              <a class="is-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v9H4z"/></svg><span>概览</span></a>
+              <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5h14v14H5z"/><path d="M8 9h8M8 13h5"/></svg><span>内容管理</span></a>
+              <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h7v5H4zM13 13h7v5h-7z"/><path d="M11 8.5h2M13 15.5h-2"/></svg><span>栏目设置</span></a>
+              <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M5 17l5-4 4 3 3-2 2 2"/></svg><span>媒体库</span></a>
+              <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v10m0 0l-3.2-3.2M12 14l3.2-3.2"/><path d="M5 18h14"/></svg><span>发布记录</span></a>
+              <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg><span>系统设置</span></a>
+              <div class="c-side__foot">v1.0 · 演示数据</div>
+            </aside>
+
+            <div class="c-main">
+              <div class="c-top">
+                <div class="c-top__crumb">后台管理 <b>/ 内容管理</b></div>
+                <div class="c-top__user"><i>管</i>管理员</div>
+              </div>
+              <div class="c-body">
+                <div class="c-stats">
+                  <div class="c-stat"><em>已发布</em><b id="stPub">3</b><u>前台可见</u></div>
+                  <div class="c-stat"><em>草稿</em><b id="stDraft">2</b><u>未对外</u></div>
+                  <div class="c-stat"><em>待审核</em><b id="stWait">1</b><u>需系主任确认</u></div>
+                  <div class="c-stat"><em>本周新增</em><b>6</b><u>+2</u></div>
+                </div>
+
+                <div class="c-toolbar">
+                  <button class="c-btn c-btn--pri" id="btnNew">＋ 新建内容</button>
+                  <button class="c-btn" id="btnRefresh">同步前台</button>
+                  <span class="sp">共 <b id="rows">6</b> 条内容</span>
+                </div>
+
+                <div class="c-tablewrap">
+                  <table class="c-tb">
+                    <thead>
+                      <tr><th style="width:44%">标题</th><th>栏目</th><th>状态</th><th>更新时间</th><th style="text-align:right">操作</th></tr>
+                    </thead>
+                    <tbody id="tbody">
+                      <tr data-st="pub"><td class="t">2022 级毕业设计展开展</td><td class="cat">教学动态</td><td><span class="chip chip--pub">已发布</span></td><td class="tm">11-12 09:20</td><td><div class="op"><button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="off">下线</button></div></td></tr>
+                      <tr data-st="pub"><td class="t">关于毕业设计答辩安排的通知</td><td class="cat">通知公告</td><td><span class="chip chip--pub">已发布</span></td><td class="tm">11-11 16:40</td><td><div class="op"><button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="off">下线</button></div></td></tr>
+                      <tr data-st="pub"><td class="t">实训室预约系统上线试运行</td><td class="cat">教学动态</td><td><span class="chip chip--pub">已发布</span></td><td class="tm">11-10 10:05</td><td><div class="op"><button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="off">下线</button></div></td></tr>
+                      <tr data-st="draft"><td class="t">省职业院校技能大赛校内选拔</td><td class="cat">通知公告</td><td><span class="chip chip--draft">草稿</span></td><td class="tm">11-09 15:12</td><td><div class="op"><button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="pub">发布</button></div></td></tr>
+                      <tr data-st="draft"><td class="t">校企合作课程建设方案（讨论稿）</td><td class="cat">校企合作</td><td><span class="chip chip--draft">草稿</span></td><td class="tm">11-08 11:30</td><td><div class="op"><button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="pub">发布</button></div></td></tr>
+                      <tr data-st="wait"><td class="t">2025—2026 学年奖学金评定结果</td><td class="cat">通知公告</td><td><span class="chip chip--wait">待审核</span></td><td class="tm">11-07 09:00</td><td><div class="op"><button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="pub">通过</button></div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="c-modal" id="modal">
+          <div class="c-modal__box">
+            <h3>新建内容</h3>
+            <div class="c-field"><label for="nt">标题</label><input id="nt" placeholder="请输入标题"></div>
+            <div class="c-field"><label for="nc">栏目</label><input id="nc" placeholder="如：通知公告 / 教学动态" value="通知公告"></div>
+            <div class="c-field"><label for="nb">正文摘要</label><textarea id="nb" placeholder="一两句话说明这条内容"></textarea></div>
+            <div class="c-modal__foot">
+              <button class="c-btn" id="btnCancel">取消</button>
+              <button class="c-btn c-btn--pri" id="btnSave">保存为草稿</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="c-toast" id="toast">已同步</div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<section class="spec">
+  <div class="wrap spec__grid">
+    <aside class="spec__aside">
+      <p class="eyebrow">设计说明</p>
+      <h2 class="h2" style="margin-top:.9rem">前台好看，<br>后台好用</h2>
+      <ul class="spec__facts">
+        <li><span>对应选题</span><b>学校门户网站设计与实现（含后台管理）</b></li>
+        <li><span>成果形式</span><b>网站 + 后台管理系统</b></li>
+        <li><span>核心技术</span><b>HTML · CSS · 原生 JS · 本地存储</b></li>
+        <li><span>功能模块</span><b>登录 / 内容 / 栏目 / 媒体 / 日志</b></li>
+        <li><span>适配</span><b>电脑为主，后台兼顾平板</b></li>
+        <li><span>发布方式</span><b>GitHub Pages（前台演示）</b></li>
+      </ul>
+    </aside>
+    <div class="spec__body">
+      <div class="spec__item reveal">
+        <h3><em>01</em>选题背景</h3>
+        <p>院系网站的真正痛点是"更新难"：一则通知要经过写稿、排版、上传、找管理员替换文件，平均两三天才能上线。本选题把"前台展示 + 后台发布"作为一套完整系统来设计，重点验证内容从录入到上线的全链路，而不是只画几个漂亮页面。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>02</em>设计思路</h3>
+        <p>前后台共用一套设计语言，但操作密度完全不同：前台留白、少控件；后台紧凑、控件密集且状态明确。所有内容都有且只有一个状态（草稿 / 待审核 / 已发布），状态决定它在哪出现。</p>
+        <ul>
+          <li>登录页不堆信息，只保留身份与一行动机说明。</li>
+          <li>列表页把"状态"放在最显眼的位置，颜色即语义。</li>
+          <li>危险操作（下线）与常规操作（编辑）在视觉上分层。</li>
+          <li>移动端后台把侧栏折成横向标签，保证单手可操作。</li>
+        </ul>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>03</em>「五心」主题体现</h3>
+        <p><b>红心</b>：栏目围绕"服务地方"设置校企合作与就业板块，让门户承担对外表达的功能。<b>仁心</b>：每条操作都有反馈（toast 提示），不让人担心"到底存没存上"。<b>恒心</b>：状态机改了五版，最终收敛为三态，多一个都不加。<b>匠心</b>：表格行高、按钮圆角、状态色全部对齐同一套度量。<b>创心</b>：用浏览器本地存储模拟数据库，答辩现场断网也能完整演示。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>04</em>技术实现</h3>
+        <p>演示版以 localStorage 承担数据层，前端用原生 JS 做状态渲染；真实部署时替换为接口层即可，页面结构不必改动。</p>
+        <div class="chips">
+          <span>localStorage 数据层</span>
+          <span>状态机（三态）</span>
+          <span>事件委托</span>
+          <span>CSS Grid 后台布局</span>
+          <span>表单校验</span>
+          <span>无框架依赖</span>
+        </div>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>05</em>可拓展方向</h3>
+        <ul>
+          <li>接入真实登录（会话 / Token）与角色权限（编辑、审核、管理员）。</li>
+          <li>增加图片上传与媒体库管理，支持封面裁剪。</li>
+          <li>补充操作日志与版本回滚，满足学校内容留痕要求。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pager">
+  <div class="wrap pager__in">
+    <a href="../app/t3.html" class="prev">
+      <span class="k">← 上一个模板</span>
+      <span class="t">A—03 校园数据可视化展示</span>
+    </a>
+    <a href="t2.html" class="next">
+      <span class="k">下一个模板 →</span>
+      <span class="t">N—02 虚拟校园展厅与线上导览</span>
+    </a>
+  </div>
+</nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__bar">
+      <span>© <span data-year>2026</span> 信息工程系 · 毕业设计教学参考</span>
+      <span class="mono">N—01 · PORTAL + CMS</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/base.js"></script>
+<script>
+(function(){
+  var viewBtns = document.querySelectorAll('.c-seg button');
+  var views = { front: document.getElementById('viewFront'), admin: document.getElementById('viewAdmin') };
+  viewBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      viewBtns.forEach(function(x){ x.classList.remove('is-on'); });
+      b.classList.add('is-on');
+      Object.keys(views).forEach(function(k){ views[k].classList.toggle('is-on', k === b.dataset.view); });
+    });
+  });
+
+  var toast = document.getElementById('toast');
+  var tmr;
+  function say(msg){
+    toast.textContent = msg;
+    toast.classList.add('is-on');
+    clearTimeout(tmr);
+    tmr = setTimeout(function(){ toast.classList.remove('is-on'); }, 1800);
+  }
+
+  /* 登录 */
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var u = document.getElementById('u').value.trim(), p = document.getElementById('p').value;
+    if(u === 'admin' && p === 'demo123'){
+      document.getElementById('loginPanel').style.display = 'none';
+      document.getElementById('adminApp').hidden = false;
+      say('登录成功，欢迎回来');
+    } else {
+      say('账号或密码不正确（admin / demo123）');
+    }
+  });
+
+  /* 表格操作 */
+  var tbody = document.getElementById('tbody');
+  var map = {
+    pub:   { html:'<span class="chip chip--pub">已发布</span>',   btn:'<button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="off">下线</button>' },
+    draft: { html:'<span class="chip chip--draft">草稿</span>',   btn:'<button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="pub">发布</button>' },
+    wait:  { html:'<span class="chip chip--wait">待审核</span>',  btn:'<button class="c-btn c-btn--sm" data-act="edit">编辑</button><button class="c-btn c-btn--sm" data-act="pub">通过</button>' }
+  };
+  function now(){
+    var d = new Date();
+    return (d.getMonth()+1 < 10 ? '0' : '') + (d.getMonth()+1) + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate()
+      + ' ' + (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+  }
+  function setRow(tr, st){
+    tr.dataset.st = st;
+    tr.children[2].innerHTML = map[st].html;
+    tr.querySelector('.op').innerHTML = map[st].btn;
+    tr.children[3].textContent = now();
+  }
+  function counts(){
+    var pub = 0, dr = 0, wt = 0;
+    [].forEach.call(tbody.rows, function(tr){
+      if(tr.dataset.st === 'pub') pub++;
+      else if(tr.dataset.st === 'draft') dr++;
+      else wt++;
+    });
+    document.getElementById('stPub').textContent = pub;
+    document.getElementById('stDraft').textContent = dr;
+    document.getElementById('stWait').textContent = wt;
+    document.getElementById('rows').textContent = tbody.rows.length;
+    /* 前台只渲染已发布 */
+    var fl = document.getElementById('frontList');
+    fl.innerHTML = '';
+    var i = 0;
+    [].forEach.call(tbody.rows, function(tr){
+      if(tr.dataset.st !== 'pub' || i >= 3) return;
+      i++;
+      var title = tr.querySelector('.t').textContent;
+      var cat = tr.querySelector('.cat').textContent;
+      var el = document.createElement('div');
+      el.className = 'c-front__card';
+      el.innerHTML = '<span></span><h4></h4><p>发布于 ' + tr.children[3].textContent + ' · 由后台同步</p>';
+      el.querySelector('span').textContent = cat;
+      el.querySelector('h4').textContent = title;
+      fl.appendChild(el);
+    });
+  }
+  tbody.addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-act]');
+    if(!btn) return;
+    var tr = btn.closest('tr'), act = btn.dataset.act;
+    if(act === 'edit'){ say('已打开编辑「' + tr.querySelector('.t').textContent + '」'); return; }
+    if(act === 'off'){ setRow(tr, 'draft'); say('已下线，转入草稿箱'); }
+    if(act === 'pub'){ setRow(tr, 'pub'); say('已发布，前台同步更新'); }
+    counts();
+  });
+
+  /* 新建 */
+  var modal = document.getElementById('modal');
+  document.getElementById('btnNew').addEventListener('click', function(){
+    document.getElementById('nt').value = '';
+    document.getElementById('nb').value = '';
+    modal.classList.add('is-on');
+    document.getElementById('nt').focus();
+  });
+  document.getElementById('btnCancel').addEventListener('click', function(){ modal.classList.remove('is-on'); });
+  document.getElementById('btnSave').addEventListener('click', function(){
+    var t = document.getElementById('nt').value.trim() || '未命名内容';
+    var c = document.getElementById('nc').value.trim() || '通知公告';
+    var tr = document.createElement('tr');
+    tr.dataset.st = 'draft';
+    tr.innerHTML = '<td class="t"></td><td class="cat"></td><td></td><td class="tm">' + now() + '</td>'
+      + '<td><div class="op">' + map.draft.btn + '</div></td>';
+    tr.querySelector('.t').textContent = t;
+    tr.querySelector('.cat').textContent = c;
+    tr.children[2].innerHTML = map.draft.html;
+    tbody.insertBefore(tr, tbody.firstChild);
+    modal.classList.remove('is-on');
+    counts();
+    say('已保存为草稿');
+  });
+  document.getElementById('btnRefresh').addEventListener('click', function(){
+    counts();
+    say('已与前台同步');
+  });
+
+  counts();
+})();
+</script>
+</body>
+</html>

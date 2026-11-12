@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C—01 校园数字形象云平台与作品展示站 · 数字形象模板库</title>
+<meta name="description" content="毕业设计模板 C—01：把三个专业的毕业作品收进一个可检索、可收藏、可放大的云平台。">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/template.css">
+<style>
+.d-cloud{--cl-ink:#16232A;--cl-paper:#F7F5EF;--cl-line:#DCD6C8;padding:0;background:var(--cl-paper);color:var(--cl-ink);font-family:var(--sans)}
+.d-cloud *{box-sizing:border-box}
+
+/* 顶栏 */
+.g-top{
+  display:flex;align-items:center;gap:1rem;padding:1.1rem clamp(1rem,3vw,2.2rem);
+  border-bottom:1px solid var(--cl-line);flex-wrap:wrap;
+}
+.g-logo{display:flex;align-items:center;gap:.6rem}
+.g-logo b{font-family:var(--serif);font-size:1.02rem;letter-spacing:.04em}
+.g-logo span{display:block;font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;color:#8A8272}
+.g-search{margin-left:auto;display:flex;align-items:center;gap:.5rem;border:1px solid var(--cl-line);border-radius:2px;padding:.42rem .7rem;background:#fff;min-width:210px}
+.g-search svg{width:14px;height:14px;color:#8A8272;flex:none}
+.g-search input{border:0;outline:0;background:transparent;font:inherit;font-size:.78rem;width:100%;color:inherit}
+.g-up{
+  border:1px solid var(--cl-ink);background:var(--cl-ink);color:#F7F5EF;font:inherit;font-size:.74rem;
+  padding:.5rem 1rem;border-radius:2px;cursor:pointer;letter-spacing:.06em;transition:.25s;
+}
+.g-up:hover{background:transparent;color:var(--cl-ink)}
+
+/* 标题区 */
+.g-head{padding:clamp(1.6rem,4vw,2.8rem) clamp(1rem,3vw,2.2rem) 1.2rem;display:flex;align-items:flex-end;gap:2rem;flex-wrap:wrap}
+.g-head h2{font-family:var(--serif);font-size:clamp(1.5rem,3vw,2.1rem);font-weight:600;letter-spacing:.02em}
+.g-head p{font-size:.76rem;line-height:1.9;color:#6B6558;max-width:46ch;margin-top:.5rem}
+.g-count{margin-left:auto;text-align:right;font-family:var(--mono);font-size:.64rem;color:#8A8272;line-height:2}
+.g-count b{display:block;font-family:var(--serif);font-size:1.9rem;color:var(--cl-ink);font-weight:600;letter-spacing:0}
+
+/* 筛选 */
+.g-filter{display:flex;gap:.4rem;flex-wrap:wrap;padding:0 clamp(1rem,3vw,2.2rem) 1.2rem;align-items:center}
+.g-filter button{
+  border:1px solid var(--cl-line);background:#fff;color:#5E594D;font:inherit;font-size:.72rem;
+  padding:.34rem .8rem;border-radius:99px;cursor:pointer;transition:.2s;letter-spacing:.04em;
+}
+.g-filter button:hover{border-color:#A9A292}
+.g-filter > button.is-on{background:var(--cl-ink);border-color:var(--cl-ink);color:#F7F5EF}
+.g-sort{margin-left:auto;display:flex;gap:.2rem;font-size:.7rem;color:#8A8272;align-items:center}
+.g-sort button{border:0;background:none;font:inherit;color:inherit;cursor:pointer;padding:.2rem .4rem;border-bottom:1px solid transparent}
+.g-sort button.is-on{color:var(--cl-ink);border-color:var(--cl-ink)}
+
+/* 网格 */
+.g-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--cl-line);
+  border-top:1px solid var(--cl-line);border-bottom:1px solid var(--cl-line);
+}
+.g-card{background:var(--cl-paper);padding:0;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;display:flex;flex-direction:column;transition:.25s}
+.g-card:hover{background:#fff}
+.g-cover{
+  position:relative;aspect-ratio:4/3;overflow:hidden;
+  background:var(--c,#DDD6C6);display:flex;align-items:flex-end;padding:.9rem;
+}
+.g-cover::after{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.14) 0 1px,transparent 1px 9px);
+  opacity:.7;
+}
+.g-cover i{
+  position:absolute;top:.7rem;left:.9rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;
+  color:rgba(22,35,42,.62);font-style:normal;
+}
+.g-cover b{
+  position:relative;font-family:var(--serif);font-size:1.05rem;line-height:1.5;font-weight:600;color:#16232A;
+  letter-spacing:.02em;mix-blend-mode:multiply;
+}
+.g-meta{padding:.85rem .9rem 1rem;display:flex;flex-direction:column;gap:.4rem;flex:1}
+.g-meta .d{font-size:.72rem;color:#5B564A;line-height:1.85;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.g-meta p.k{font-size:.66rem;color:#8A8272;letter-spacing:.04em}
+.g-meta .row{display:flex;align-items:center;gap:.5rem;margin-top:auto;padding-top:.5rem;font-family:var(--mono);font-size:.6rem;color:#8A8272;letter-spacing:.06em}
+.g-meta .row .star{margin-left:auto;display:flex;align-items:center;gap:.25rem;cursor:pointer;padding:0;border:0;background:none;font:inherit;color:inherit}
+.g-meta .row .star svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.4}
+.g-meta .row .star.is-on{color:#B33A2F}
+.g-meta .row .star.is-on svg{fill:#B33A2F;stroke:#B33A2F}
+
+/* 空态 */
+.g-empty{padding:4rem 1rem;text-align:center;color:#8A8272;font-size:.8rem;display:none}
+.g-empty.is-on{display:block}
+
+/* 灯箱 */
+.g-lb{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:clamp(.6rem,3vw,2.4rem)}
+.g-lb.is-on{display:flex}
+.g-lb__bg{position:absolute;inset:0;background:rgba(12,18,22,.72);backdrop-filter:blur(3px)}
+.g-lb__box{
+  position:relative;background:#F7F5EF;width:min(940px,100%);max-height:100%;overflow:auto;
+  display:grid;grid-template-columns:1.1fr .9fr;border-radius:3px;
+}
+.g-lb__art{aspect-ratio:1/1;background:var(--c,#DDD6C6);position:relative;padding:1.6rem;display:flex;flex-direction:column;justify-content:flex-end}
+.g-lb__art::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.16) 0 1px,transparent 1px 10px)}
+.g-lb__art b{position:relative;font-family:var(--serif);font-size:1.6rem;line-height:1.5;font-weight:600;color:#16232A}
+.g-lb__art i{position:absolute;top:1.4rem;left:1.6rem;font-family:var(--mono);font-size:.62rem;font-style:normal;letter-spacing:.2em;color:rgba(22,35,42,.6)}
+.g-lb__cat{position:absolute;right:1.1rem;top:.7rem;font-family:var(--serif);font-size:clamp(3.4rem,7vw,6rem);line-height:1;color:#16232A;opacity:.14;pointer-events:none}
+.g-lb__txt{padding:clamp(1.2rem,2.4vw,2rem);display:flex;flex-direction:column;gap:.8rem}
+.g-lb__txt h3{font-family:var(--serif);font-size:1.16rem;line-height:1.5;font-weight:600}
+.g-lb__txt .auth{font-family:var(--mono);font-size:.66rem;color:#8A8272;letter-spacing:.06em}
+.g-lb__txt p{font-size:.78rem;line-height:2;color:#4F4A40}
+.g-lb__kv{display:grid;grid-template-columns:1fr 1fr;gap:.7rem 1rem;border-top:1px solid var(--cl-line);padding-top:.9rem;margin-top:1.1rem}
+.g-lb__kv div{font-size:.6rem;color:#8A8272;letter-spacing:.08em}
+.g-lb__kv b{display:block;font-size:.76rem;color:var(--cl-ink);margin-top:.2rem;letter-spacing:0}
+.g-lb__nav{display:flex;gap:.4rem;margin-top:auto;padding-top:1.2rem}
+.g-lb__nav button{flex:1;border:1px solid var(--cl-line);background:#fff;font:inherit;font-size:.72rem;padding:.5rem;border-radius:2px;cursor:pointer;transition:.2s}
+.g-lb__nav button:hover{background:var(--cl-ink);color:#F7F5EF;border-color:var(--cl-ink)}
+.g-lb__x{position:absolute;top:.5rem;right:.5rem;z-index:2;width:32px;height:32px;border:0;background:rgba(247,245,239,.9);border-radius:99px;cursor:pointer;font-size:1rem;line-height:1;color:#16232A}
+
+@media (max-width:1000px){
+  .g-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:820px){
+  .g-grid{grid-template-columns:repeat(2,1fr)}
+  .g-lb__box{grid-template-columns:1fr}
+  .g-lb__art{aspect-ratio:16/10}
+  .g-search{min-width:0;flex:1}
+  .g-count{display:none}
+}
+@media (max-width:520px){
+  .g-grid{grid-template-columns:1fr}
+  .g-cover{aspect-ratio:16/9}
+}
+</style>
+</head>
+<body class="major-cloud">
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="../index.html">
+      <span class="seal">匠</span>
+      <span class="brand__txt"><b>数字形象模板库</b><span>SUZHOU CRAFTSMANSHIP</span></span>
+    </a>
+    <nav class="nav__links" aria-label="主导航">
+      <a href="../index.html#major-app">计算机应用</a>
+      <a href="../index.html#major-net">计算机网络</a>
+      <a href="../index.html#major-cloud">云计算</a>
+      <a href="../index.html#topics">选题清单</a>
+    </nav>
+    <div class="nav__tools">
+      <button class="icon-btn theme-btn" aria-label="切换深浅色">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+      <button class="icon-btn burger" aria-label="菜单" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../index.html">返回首页 <span>HOME</span></a>
+  <a href="../index.html#major-app">计算机应用技术 <span>APP</span></a>
+  <a href="../index.html#major-net">计算机网络技术 <span>NET</span></a>
+  <a href="../index.html#major-cloud">云计算技术应用 <span>CLOUD</span></a>
+  <a href="../index.html#topics">选题清单 <span>TOPIC</span></a>
+  <div class="drawer__foot">C—01 · 云平台作品展示</div>
+</div>
+
+<main>
+<section class="thead">
+  <div class="wrap">
+    <nav class="crumb"><a href="../index.html">首页</a><i>/</i><a href="../index.html#major-cloud">云计算技术应用</a><i>/</i><span>C—01</span></nav>
+    <div class="thead__row">
+      <div>
+        <p class="thead__no"><i></i>C—01 · 平台</p>
+        <h1 class="h1">校园数字形象云平台<br>与作品展示站</h1>
+        <p class="lede thead__sub">把三个专业、三届、上百件作品收进同一个地方。学生要找往届参考，企业要看学生能做什么，都从这一次检索开始。</p>
+        <div class="thead__tags">
+          <span class="tag tag--accent">检索筛选</span>
+          <span class="tag">大图灯箱</span>
+          <span class="tag">收藏</span>
+          <span class="tag">作品元数据</span>
+        </div>
+      </div>
+      <div class="thead__side">
+        <span class="k">成果形式</span>
+        <span class="v">网站 / 平台</span>
+        <span class="k">建议工作量</span>
+        <span class="v">6—8 周</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="demo__bar">
+    <span class="lbl">DEMO · 作品主体</span>
+    <span class="hint">点击卡片看大图，点星号收藏；搜索框按名称、作者、标签即时过滤</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="d-cloud" id="cloud">
+
+    <div class="g-top">
+      <div class="g-logo">
+        <span class="seal" style="width:30px;height:30px;font-size:.9rem">信</span>
+        <div>
+          <b>信息工程系 · 作品云</b>
+          <span>ZHANGJIAGANG · WORKS ARCHIVE</span>
+        </div>
+      </div>
+      <label class="g-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg>
+        <input id="q" type="search" placeholder="搜作品名、作者、标签" aria-label="搜索作品">
+      </label>
+      <button class="g-up">＋ 上传作品</button>
+    </div>
+
+    <div class="g-head">
+      <div>
+        <h2>往届毕业作品</h2>
+        <p>每一件都能点开看细节：做了什么、用什么做的、做给谁看。留白的封面是学生自己选的颜色，不统一，但都是真的。</p>
+      </div>
+      <div class="g-count"><span>收录总数</span><b id="total">0</b></div>
+    </div>
+
+    <div class="g-filter" id="filter">
+      <button class="is-on" data-c="all">全部</button>
+      <button data-c="视觉">视觉设计</button>
+      <button data-c="网站">网站</button>
+      <button data-c="影像">影像</button>
+      <button data-c="数据">数据</button>
+      <button data-c="交互">交互</button>
+      <div class="g-sort">
+        <span>排序</span>
+        <button class="is-on" data-s="new">最新</button>
+        <button data-s="star">收藏</button>
+      </div>
+    </div>
+
+    <div class="g-grid" id="grid"></div>
+    <div class="g-empty" id="empty">没有找到匹配的作品，换个词试试。</div>
+
+    <!-- 灯箱 -->
+    <div class="g-lb" id="lb" role="dialog" aria-modal="true" aria-label="作品详情">
+      <div class="g-lb__bg" data-close></div>
+      <div class="g-lb__box">
+        <button class="g-lb__x" data-close aria-label="关闭">×</button>
+        <div class="g-lb__art" id="lbArt"><i id="lbNo"></i><span class="g-lb__cat" id="lbCat"></span><b id="lbTitle"></b></div>
+        <div class="g-lb__txt">
+          <span class="auth" id="lbAuth"></span>
+          <h3 id="lbName"></h3>
+          <p id="lbDesc"></p>
+          <div class="g-lb__kv">
+            <div>专业<select id="x" style="display:none"></select><b id="lbMajor"></b></div>
+            <div>年份<b id="lbYear"></b></div>
+            <div>载体<b id="lbForm"></b></div>
+            <div>技术<b id="lbTech"></b></div>
+          </div>
+          <div class="g-lb__nav">
+            <button id="lbPrev">← 上一件</button>
+            <button id="lbNext">下一件 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<section class="spec">
+  <div class="wrap spec__grid">
+    <aside class="spec__aside">
+      <p class="eyebrow">设计说明</p>
+      <h2 class="h2" style="margin-top:.9rem">先能找，<br>再谈好看</h2>
+      <ul class="spec__facts">
+        <li><span>对应选题</span><b>校园数字形象云平台与作品展示站</b></li>
+        <li><span>成果形式</span><b>网站 / 作品库</b></li>
+        <li><span>核心技术</span><b>HTML · CSS · 原生 JS</b></li>
+        <li><span>数据组织</span><b>作品元数据数组（可换 JSON）</b></li>
+        <li><span>适配</span><b>手机 / 平板 / 电脑</b></li>
+        <li><span>发布方式</span><b>GitHub Pages</b></li>
+      </ul>
+    </aside>
+    <div class="spec__body">
+      <div class="spec__item reveal">
+        <h3><em>01</em>选题背景</h3>
+        <p>系里每年的毕业作品都散落在 U 盘、微信群和几台公用电脑里。新生想看看上一届做了什么，得靠人转链接；企业来招人，看到的往往只是几张压缩过的图片。这个题目的真实价值不在于把作品摆得好看，而在于让“作品”变成一条有字段、能检索、能引用的记录。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>02</em>设计思路</h3>
+        <p>整站只有一个动作被反复强化：找东西然后点开。所以首页不做轮播、不做大 banner，直接给筛选条和墙。</p>
+        <ul>
+          <li>封面不追求统一，颜色由学生自选，平台只负责排版秩序。</li>
+          <li>元数据固定六个字段：专业、年份、载体、技术、作者、一句话说明。</li>
+          <li>灯箱里可以直接翻上一件、下一件，不用退出重进。</li>
+          <li>收藏写在本地，答辩演示时不必登录也能演。</li>
+        </ul>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>03</em>「五心」主题体现</h3>
+        <p><b>红心</b>：首屏写清楚“这些作品是给谁看的”，把学校对外的形象放在功能之上。<b>仁心</b>：每件作品配一句人话说明，不默认读者懂专业术语。<b>恒心</b>：一百多件作品的字段被逐条校对过，宁可少收一件，不放进错的信息。<b>匠心</b>：卡片留白、行高、编号栏的基线全部对齐同一套栅格。<b>创心</b>：纯 CSS 生成封面底纹，零图片依赖，一百件作品也不会拖慢打开速度。</p>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>04</em>技术实现</h3>
+        <p>作品数据是一个对象数组，渲染、筛选、排序、灯箱都跑在同一份数据上；封面用 CSS 变量控制颜色和斜纹纹理，不加载任何图片。搜索对名称、作者、标签做包含匹配，输入即过滤。</p>
+        <div class="chips">
+          <span>数据驱动渲染</span>
+          <span>CSS 变量生成封面</span>
+          <span>数组 filter / sort</span>
+          <span>原生 JS 灯箱</span>
+          <span>localStorage 收藏</span>
+          <span>响应式 1—4 列栅格</span>
+        </div>
+      </div>
+      <div class="spec__item reveal">
+        <h3><em>05</em>可拓展方向</h3>
+        <ul>
+          <li>接真实的静态 JSON 或学校现有资源库接口，替换演示数据。</li>
+          <li>加学生登录与作品提交表单，后台走审核流。</li>
+          <li>按班级、按教师生成作品集页面，用于家长会和招生宣讲。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pager">
+  <div class="wrap pager__in">
+    <a href="../net/t2.html" class="prev">
+      <span class="k">← 上一个模板</span>
+      <span class="t">N—02 虚拟校园展厅与线上导览</span>
+    </a>
+    <a href="t2.html" class="next">
+      <span class="k">下一个模板 →</span>
+      <span class="t">C—02 校园云服务与资源管理演示系统</span>
+    </a>
+  </div>
+</nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__bar">
+      <span>© <span data-year>2026</span> 信息工程系 · 毕业设计教学参考</span>
+      <span class="mono">C—01 · WORKS PLATFORM</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/base.js"></script>
+<script>
+(function(){
+  var works = [
+    {t:'梧桐道上的十二个月', no:'A-24-01', c:'视觉', major:'计算机应用技术', year:'2024', form:'动态长页', tech:'CSS 动效', auth:'陈雨桐', star:38, col:'#D9C9AE',
+     desc:'把校园的四级风、六点半的光和每条路的树，做成一条会随滚动改变季节的长页。封面用的是四月梧桐絮落满地的颜色。'},
+    {t:'系部门户改版', no:'N-24-07', c:'网站', major:'计算机网络技术', year:'2024', form:'网站', tech:'HTML / CSS', auth:'周天佑', star:52, col:'#C9D2CE',
+     desc:'把原来的七个栏目压成四个，通知与新闻分开，家长找招生电话从三次点击减到一次。后台带简易发布流。'},
+    {t:'四十七件作品的一间屋', no:'A-25-03', c:'影像', major:'计算机应用技术', year:'2025', form:'影像 / 网页', tech:'影像剪辑', auth:'李若言', star:41, col:'#D6C3B6',
+     desc:'毕业展现场的三十七个机位素材，剪成四分钟，再拆成网页里可以逐段播放的片段。'},
+    {t:'食堂人流热力图', no:'C-25-02', c:'数据', major:'云计算技术应用', year:'2025', form:'数据看板', tech:'SVG / JS', auth:'吴静怡', star:67, col:'#BFCBD3',
+     desc:'一周五天、每半小时的刷卡记录，做成一屏能看出“几点去哪吃”的热力图，附排队建议。'},
+    {t:'会说话的旧收音机', no:'A-25-11', c:'交互', major:'计算机应用技术', year:'2025', form:'互动装置 / 网页', tech:'Web Audio', auth:'沈亦舟', star:29, col:'#D3C7B0',
+     desc:'把校史里的十段口述史塞进一台旧收音机，转动旋钮换台，每段都对应一个年份。'},
+    {t:'云机房资源预约', no:'C-24-04', c:'网站', major:'云计算技术应用', year:'2024', form:'系统演示', tech:'JS 状态机', auth:'顾清和', star:34, col:'#CBD4CB',
+     desc:'机房工位的排班与预约，冲突检测在前端完成，答辩时可以直接演示抢同一个工位。'},
+    {t:'校园植物图鉴', no:'A-23-06', c:'视觉', major:'计算机应用技术', year:'2023', form:'网站', tech:'CSS Grid', auth:'黄予安', star:23, col:'#C8CFC0',
+     desc:'六十四种校园植物，按花期排列，点开是一张手绘风格的卡片和一段辨认要点。'},
+    {t:'招生宣传十五秒', no:'A-24-09', c:'影像', major:'计算机应用技术', year:'2024', form:'短视频 / 网页', tech:'影像剪辑', auth:'钱思远', star:18, col:'#DCC6BE',
+     desc:'把招生简章拆成十五个十五秒，放在网页里按问题分类：住哪、吃什么、能不能升本。'},
+    {t:'实训楼能耗监测', no:'N-25-05', c:'数据', major:'计算机网络技术', year:'2025', form:'数据看板', tech:'SVG / JS', auth:'许砚青', star:44, col:'#C4CFD2',
+     desc:'六层楼的用电曲线与空调启停记录，找出了三个“下班不关”的房间。'},
+    {t:'校园指示系统', no:'A-25-08', c:'视觉', major:'计算机应用技术', year:'2025', form:'视觉 / 网页', tech:'SVG 图标', auth:'邓一诺', star:31, col:'#D8CFBB',
+     desc:'一套从校门到实训楼的导视牌，字重、箭头角度、底色全部统一，网页里可切换昼夜两种。'},
+    {t:'虚拟机一键实验', no:'C-25-09', c:'交互', major:'云计算技术应用', year:'2025', form:'系统演示', tech:'JS 模拟', auth:'范书言', star:25, col:'#C6CFC9',
+     desc:'把“开一台虚拟机”拆成六个可点击的步骤，每一步都有失败分支，用来给新生做课前预习。'},
+    {t:'毕业季主视觉', no:'A-24-12', c:'视觉', major:'计算机应用技术', year:'2024', form:'视觉 / 海报', tech:'CSS 排版', auth:'苏念', star:56, col:'#D5BEB4',
+     desc:'以“五心”为骨、以校门的门楣为形，做了一套可以用在横幅、朋友圈和展板上的主视觉。'}
+  ];
+
+  var grid = document.getElementById('grid');
+  var empty = document.getElementById('empty');
+  var q = document.getElementById('q');
+  var lb = document.getElementById('lb');
+  var cur = -1, cat = 'all', sort = 'new', key = '';
+  var fav = {};
+
+  try{ fav = JSON.parse(localStorage.getItem('wuxin-fav') || '{}'); }catch(e){ fav = {}; }
+
+  function list(){
+    var out = works.filter(function(w){
+      if(cat !== 'all' && w.c !== cat) return false;
+      if(!key) return true;
+      return (w.t + w.auth + w.c + w.major + w.tech).indexOf(key) > -1;
+    });
+    if(sort === 'star') out.sort(function(a,b){ return (fav[b.no]?1:0)-(fav[a.no]?1:0) || b.star-a.star; });
+    return out;
+  }
+
+  function render(){
+    var arr = list();
+    grid.innerHTML = '';
+    empty.classList.toggle('is-on', arr.length === 0);
+    arr.forEach(function(w, i){
+      var b = document.createElement('button');
+      b.className = 'g-card';
+      b.innerHTML =
+        '<div class="g-cover" style="--c:' + w.col + '"><i>' + w.no + '</i><b>' + w.t + '</b></div>' +
+        '<div class="g-meta">' +
+          '<p class="d">' + w.desc + '</p>' +
+          '<p class="k">' + w.major + ' · ' + w.form + '</p>' +
+          '<div class="row"><span>' + w.auth + '</span><span>' + w.year + '</span>' +
+            '<button class="star' + (fav[w.no] ? ' is-on' : '') + '" data-no="' + w.no + '" aria-label="收藏">' +
+              '<svg viewBox="0 0 24 24"><path d="m12 3.6 2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8Z"/></svg>' +
+              '<span>' + (w.star + (fav[w.no] ? 1 : 0)) + '</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      b.addEventListener('click', function(e){
+        if(e.target.closest('.star')) return;
+        open(i);
+      });
+      grid.appendChild(b);
+    });
+    grid.querySelectorAll('.star').forEach(function(s){
+      s.addEventListener('click', function(e){
+        e.stopPropagation();
+        var no = s.dataset.no;
+        fav[no] = !fav[no];
+        try{ localStorage.setItem('wuxin-fav', JSON.stringify(fav)); }catch(e2){}
+        render();
+      });
+    });
+    document.getElementById('total').textContent = arr.length;
+  }
+
+  function open(i){
+    cur = i;
+    var w = list()[i];
+    if(!w) return;
+    document.getElementById('lbArt').style.setProperty('--c', w.col);
+    document.getElementById('lbNo').textContent = w.no;
+    document.getElementById('lbCat').textContent = w.c;
+    document.getElementById('lbTitle').textContent = w.t;
+    document.getElementById('lbHandle') && 0;
+    document.getElementById('lbAuth').textContent = w.auth + ' · ' + w.no;
+    document.getElementById('lbName').textContent = w.t;
+    document.getElementById('lbDesc').textContent = w.desc;
+    document.getElementById('lbMajor').textContent = w.major;
+    document.getElementById('lbYear').textContent = w.year;
+    document.getElementById('lbForm').textContent = w.form;
+    document.getElementById('lbTech').textContent = w.tech;
+    lb.classList.add('is-on');
+    document.body.style.overflow = 'hidden';
+  }
+  function close(){ lb.classList.remove('is-on'); document.body.style.overflow = ''; }
+
+  document.getElementById('q').addEventListener('input', function(e){ key = e.target.value.trim(); render(); });
+  document.getElementById('filter').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.c){ cat = b.dataset.c; this.querySelectorAll('[data-c]').forEach(function(x){ x.classList.toggle('is-on', x === b); }); }
+    if(b.dataset.s){ sort = b.dataset.s; this.querySelectorAll('[data-s]').forEach(function(x){ x.classList.toggle('is-on', x === b); }); }
+    render();
+  });
+  lb.addEventListener('click', function(e){ if(e.target.hasAttribute('data-close')) close(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+  document.getElementById('lbPrev').addEventListener('click', function(){ var n = list().length; open((cur - 1 + n) % n); });
+  document.getElementById('lbNext').addEventListener('click', function(){ var n = list().length; open((cur + 1) % n); });
+
+  render();
+})();
+</script>
+</body>
+</html>
